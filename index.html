@@ -1135,22 +1135,11 @@ document.getElementById('apiKey').addEventListener('input', function() {
   localStorage.setItem('openai_api_key', this.value);
 });
 
-// 診断済みの場合は結果を復元
-const savedPersona = localStorage.getItem('persona_type');
-if (savedPersona && PERSONA_TYPES[savedPersona]) {
-  currentPersona = savedPersona;
-  const p = PERSONA_TYPES[savedPersona];
-  document.getElementById('badgeIcon').textContent = p.icon;
-  document.getElementById('badgeName').textContent = p.name;
-  document.getElementById('personaBadge').classList.add('show');
-  document.getElementById('piIcon').textContent = p.icon;
-  document.getElementById('piName').textContent = p.name;
-  document.getElementById('piDesc').textContent = p.desc.slice(0, 30) + '...';
-  showScreen('gen');
-} else {
-  renderQuestion();
-  showScreen('diag');
-}
+// 毎回必ず診断画面から開始（キャッシュを使わない）
+localStorage.removeItem('persona_type');
+currentPersona = null;
+renderQuestion();
+showScreen('diag');
 
 renderShopInfo();
 </script>
