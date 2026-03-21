@@ -691,8 +691,87 @@ const SHOPS = {
   13: { name: '40代ママ × 親の介護・準備', handle: '@40mama.care', icon: '🤝', target: '親の介護が心配な40代ママ', theme: '親の介護準備・介護グッズ・家族の健康・老後準備', keywords: ['介護', '親', '老後', '健康', '準備', '家族', 'サポート'], products: ['介護グッズ', '健康器具', 'サプリメント', '安全グッズ'], color: 'shop2', accent: '#7a8ac9' },
 };
 
-const ANGLES = ['失敗談', '気づき', 'ノウハウ', '共感', '気づき', 'ノウハウ', '失敗談'];
-const DAYS_JP = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日'];
+const DAYS_JP = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日', '8日目', '9日目', '10日目', '11日目', '12日目', '13日目', '14日目'];
+
+// ===== FORMULAS =====
+const FORMULAS = {
+  QUEST: {
+    name: 'QUEST',
+    steps: [
+      { label: 'Qualify', desc: 'ターゲットを絞り込む投稿。「これは〇〇で悩んでいる人だけに読んでほしい」という切り出しで始める。共感で引きつけ、自分事だと思わせる。' },
+      { label: 'Understand', desc: '深く共感する投稿。読者の悩みを代弁し「私だけじゃなかった」と思わせる。感情に寄り添う。煽りは一切なし。' },
+      { label: 'Educate', desc: '知識・気づきを与える投稿。「実はこういう仕組みだった」という新しい視点を提供。押しつけず、発見として伝える。' },
+      { label: 'Educate深掘り', desc: '具体的なノウハウ投稿。箇条書きで実践的な内容を伝える。読者がすぐ試せる内容にする。' },
+      { label: 'Stimulate', desc: '変化・結果を伝える投稿。「やってみたら〇〇が変わった」という体験談。過度な煽りは避け、温かく背中を押すトーンで。' },
+      { label: 'Transition', desc: '自然な行動促進。「気になった方はプロフリンクへ」程度の柔らかい誘導。押しつけず、選択肢を提示するトーンで。' },
+    ]
+  },
+  SOS: {
+    name: 'Soap Opera Sequence',
+    steps: [
+      { label: 'Set the Stage', desc: '舞台設定投稿。「1年前の私は〇〇でした」という過去の状況描写。読者が「私もそう！」と思える具体的なシーンから始める。' },
+      { label: 'High Drama', desc: '感情的なクライマックス。「そのとき〇〇が起きた」という転換点。ドラマチックだが嘘っぽくならない、リアルな感情表現。' },
+      { label: 'Epiphany', desc: '気づきの投稿。「そこで気づいた、問題は〇〇じゃなかった」という発見。読者の常識をやさしくひっくり返す。' },
+      { label: 'Hidden Benefits', desc: '想定外のメリット投稿。「変えたら〇〇まで変わった」という嬉しい副産物を伝える。読者の期待を上回る内容。' },
+      { label: 'Urgency', desc: '軽い緊急性。「知らないともったいない」程度の柔らかい表現。脅しや煽りは一切使わず、純粋に「早く知ってほしい」気持ちで書く。' },
+      { label: 'Call to Action', desc: 'やわらかい行動促進。「よかったらプロフリンクも見てみてね」程度。強制感ゼロ、友人に伝えるようなトーン。' },
+    ]
+  },
+  PASONA: {
+    name: 'PASONA',
+    steps: [
+      { label: 'Problem', desc: '問題提起投稿。読者の日常にある悩みを具体的な場面で描写。「あるある」と思わせる。責めず、寄り添いながら問題を提示。' },
+      { label: 'Agitation', desc: '問題の深刻さを伝える投稿。「このままだと〇〇になるかも」という未来への懸念。ただし恐怖を煽るのではなく、「気づきを促す」トーンで柔らかく表現。' },
+      { label: 'Solution', desc: '解決策の提示。「こうしたら変わった」という体験ベースの解決策。押しつけず「こんな方法もあるよ」という提案スタイル。' },
+      { label: 'Offer', desc: '具体的な提案投稿。実際に使ったグッズや方法を紹介。楽天で買えるものに自然につながる内容。' },
+      { label: 'Narrowing down', desc: 'ターゲットを絞る投稿。「特に〇〇なママには試してほしい」という絞り込み。読者が「私のことだ」と感じるよう具体的に。' },
+      { label: 'Action', desc: '自然な行動促進。「詳しくはプロフリンクへ」という柔らかい誘導。感謝の気持ちと共に締めくくる。' },
+    ]
+  },
+  AICPBSAWN: {
+    name: 'AICPBSAWN',
+    steps: [
+      { label: 'Attention', desc: '注目を集める投稿。冒頭3行で「これは私のことだ」と思わせる。具体的な場面や数字を使う。' },
+      { label: 'Interest', desc: '興味を深める投稿。「なぜそうなるのか」という理由や背景を伝える。知的好奇心をくすぐる内容。' },
+      { label: 'Credibility', desc: '信頼性を高める投稿。自分の体験・失敗・変化を正直に話す。完璧を装わず、リアルな人間味を見せる。' },
+      { label: 'Prove', desc: '証拠を示す投稿。「実際にやってみた結果」や「フォロワーさんの声」を紹介。具体的な変化を伝える。' },
+      { label: 'Benefits', desc: 'メリットを伝える投稿。「使うとどう変わるか」を読者目線で具体的に。スペックではなく生活への変化を中心に。' },
+      { label: 'Scarcity', desc: '柔らかい希少性。「この情報を知ってるママはまだ少ない」程度の表現。プレッシャーを与えず、特別感を演出。' },
+      { label: 'Action', desc: '行動を促す投稿。「一つだけ試してみて」という小さな行動提案。高いハードルを設けない。' },
+      { label: 'Warn', desc: '優しい警告。「知らないと損かも」程度の柔らかい表現。怖がらせるのではなく、背中をそっと押すトーン。' },
+      { label: 'Now', desc: '今すぐ感の演出。「今日から始める人が3ヶ月後に笑ってる」という前向きな表現。急かさず、可能性を示す。' },
+    ]
+  },
+  SB7: {
+    name: 'StoryBrand SB7',
+    steps: [
+      { label: 'Character', desc: 'キャラクター（読者）の欲求を描く投稿。「〇〇したいと思っているあなたへ」という切り出し。主役は読者、自分はガイドという姿勢。' },
+      { label: 'Problem', desc: '問題を3層で描く投稿。外的問題（目に見える悩み）、内的問題（感情的な悩み）、哲学的問題（なぜこれは不公平か）を柔らかく提示。' },
+      { label: 'Guide', desc: 'ガイドとしての自己紹介。「私も同じ悩みを持っていた」という共感と「でも解決できた」という実績。上から目線にならず対等なトーンで。' },
+      { label: 'Plan', desc: '計画・ステップを示す投稿。「3つのステップで変わった」という具体的な道筋。読者が「私にもできそう」と思える内容。' },
+      { label: 'Action', desc: '行動を促す投稿。「プロフリンクを見てみて」という直接的だが押しつけない誘導。' },
+      { label: 'Avoid Failure', desc: '失敗回避の投稿。「やらなかった場合どうなるか」を柔らかく描写。怖がらせず、気づきを促す。' },
+      { label: 'Success', desc: '成功イメージの投稿。「こんな未来が待っている」という明るいビジョン。読者が自分の未来を想像できる具体的な描写。' },
+    ]
+  },
+  NORMAL: {
+    name: '通常版',
+    steps: [
+      { label: '失敗談', desc: '失敗談から始まる共感投稿。具体的な場面描写で冒頭3行で引きつける。最後は「明日〇〇をシェアします」の寸止め。' },
+      { label: '気づき', desc: '常識をひっくり返す気づき投稿。「実は〇〇だと思っていたけど」という構造。読者の視点を変える。' },
+      { label: 'ノウハウ', desc: '実践的なノウハウ投稿。箇条書きで具体的なTipsを紹介。保存したくなる実用的な内容。' },
+      { label: '共感', desc: '感情的な共感投稿。読者の気持ちを代弁し「わかる！」と思わせる。希望と前向きなメッセージで締める。' },
+      { label: '気づき2', desc: '2つ目の気づき投稿。別の角度から常識をひっくり返す。' },
+      { label: 'ノウハウ2', desc: '2つ目のノウハウ投稿。異なるテーマの実践的なTips。' },
+      { label: '失敗談2', desc: '2つ目の失敗談投稿。別のエピソードで共感を集める。' },
+    ]
+  }
+};
+
+function selectFormula() {
+  const formulas = ['QUEST', 'SOS', 'PASONA', 'AICPBSAWN', 'SB7', 'NORMAL'];
+  return formulas[Math.floor(Math.random() * formulas.length)];
+}
 
 // ===== STATE =====
 let currentQ = 0;
@@ -903,99 +982,39 @@ function randomTime() {
   return `${hour}:${String(min).padStart(2, '0')}`;
 }
 
-function buildPrompt(shop, angle, personaType) {
+function buildPrompt(shop, formulaKey, stepIndex) {
   const s = SHOPS[shop];
   const p = currentPersona ? PERSONA_TYPES[currentPersona] : PERSONA_TYPES['sun'];
+  const formula = FORMULAS[formulaKey];
+  const step = formula.steps[stepIndex];
 
-  const prompts = {
-    '失敗談': `あなたは${s.target}向けのThreadsアカウントの中の人です。
-以下の条件で、失敗談（Empathy/Comments角度）の投稿文を日本語で書いてください。
-
-【投稿者の人格・キャラクター】
-タイプ：${p.name}
-特徴：${p.desc}
-文体スタイル：${p.tone}
-
-【投稿条件】
-- ターゲット：${s.target}
-- テーマ：${s.theme}
-- キーワード：${s.keywords.join('、')}
-- 文字数：300〜500文字（必ず300文字以上書くこと）
-- 冒頭3行で共感を取る（具体的な場面描写）
-- 上記の人格・文体スタイルを必ず反映すること
-- 自分の失敗談として書く
-- 最後は「明日〇〇をシェアします」で終わる寸止め効果
-- 改行を効果的に使う
-- ハッシュタグなし
-- 投稿文のみ出力（説明文不要）`,
-
-    '気づき': `あなたは${s.target}向けのThreadsアカウントの中の人です。
-以下の条件で、気づき系（Perspective Shift角度）の投稿文を日本語で書いてください。
+  return `あなたは${s.target}向けのThreadsアカウントの中の人です。
+以下の条件で投稿文を日本語で書いてください。
 
 【投稿者の人格・キャラクター】
 タイプ：${p.name}
 特徴：${p.desc}
 文体スタイル：${p.tone}
 
-【投稿条件】
-- ターゲット：${s.target}
-- テーマ：${s.theme}
-- キーワード：${s.keywords.join('、')}
-- 文字数：300〜500文字（必ず300文字以上書くこと）
-- 「実は〇〇だと思っていたけど、本当は△△だった」という構造
-- 上記の人格・文体スタイルを必ず反映すること
-- 読者の常識をひっくり返す気づきを提供
-- 最後は続きへの期待で終わる
-- 改行を効果的に使う
-- ハッシュタグなし
-- 投稿文のみ出力（説明文不要）`,
-
-    'ノウハウ': `あなたは${s.target}向けのThreadsアカウントの中の人です。
-以下の条件で、ノウハウ系（Saves角度）の投稿文を日本語で書いてください。
-
-【投稿者の人格・キャラクター】
-タイプ：${p.name}
-特徴：${p.desc}
-文体スタイル：${p.tone}
+【フォーミュラー】
+使用フォーミュラー：${formula.name}
+現在のステップ：${step.label}
+このステップの役割：${step.desc}
 
 【投稿条件】
 - ターゲット：${s.target}
 - テーマ：${s.theme}
 - キーワード：${s.keywords.join('、')}
 - 文字数：300〜500文字（必ず300文字以上書くこと）
-- 具体的なTipsを2〜3個箇条書きで紹介
-- 上記の人格・文体スタイルを必ず反映すること
-- 「保存しておきたい」と思わせる実用的な内容
-- 楽天で買える${s.products[Math.floor(Math.random() * s.products.length)]}に自然につながる内容
+- 上記のフォーミュラーのステップと人格を必ず反映すること
+- 煽り表現は使わない。Threadsらしい温かく自然な語り口で
+- 押しつけや強制感のない、友人に話しかけるようなトーンで
+- 改行を効果的に使い読みやすくする
 - ハッシュタグなし
-- 投稿文のみ出力（説明文不要）`,
-
-    '共感': `あなたは${s.target}向けのThreadsアカウントの中の人です。
-以下の条件で、共感ストーリー（Emotion角度）の投稿文を日本語で書いてください。
-
-【投稿者の人格・キャラクター】
-タイプ：${p.name}
-特徴：${p.desc}
-文体スタイル：${p.tone}
-
-【投稿条件】
-- ターゲット：${s.target}
-- テーマ：${s.theme}
-- キーワード：${s.keywords.join('、')}
-- 文字数：300〜500文字（必ず300文字以上書くこと）
-- 「わかる！」と思わせる感情的な共感から始まる
-- 上記の人格・文体スタイルを必ず反映すること
-- 読者の気持ちを代弁する
-- 希望や前向きなメッセージで終わる
-- 改行を効果的に使う
-- ハッシュタグなし
-- 投稿文のみ出力（説明文不要）`
-  };
-
-  return prompts[angle];
+- 投稿文のみ出力（説明文・ラベル等は不要）`;
 }
 
-async function generatePost(shop, angle) {
+async function generatePost(shop, formulaKey, stepIndex) {
   const apiKey = document.getElementById('apiKey').value.trim();
   if (!apiKey) throw new Error('APIキーを入力してください');
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -1007,7 +1026,7 @@ async function generatePost(shop, angle) {
     body: JSON.stringify({
       model: 'gpt-4o-mini',
       max_tokens: 1000,
-      messages: [{ role: 'user', content: buildPrompt(shop, angle) }]
+      messages: [{ role: 'user', content: buildPrompt(shop, formulaKey, stepIndex) }]
     })
   });
   const data = await response.json();
@@ -1021,17 +1040,29 @@ async function generate() {
   btn.innerHTML = '<div class="spinner"></div> 生成中...';
   wrap.innerHTML = '';
 
+  // フォーミュラーをランダム選択
+  const formulaKey = selectFormula();
+  const formula = FORMULAS[formulaKey];
+  const totalSteps = formula.steps.length;
+
+  // 投稿時間を生成（ステップ数分）
   const times = [];
-  while (times.length < 7) {
+  while (times.length < totalSteps) {
     const t = randomTime();
     if (!times.includes(t)) times.push(t);
   }
-  // ソートしない → 人間らしくランダムな順番に
 
-  for (let i = 0; i < 7; i++) {
-    const angle = ANGLES[i];
+  // フォーミュラーバナーを表示
+  const banner = document.createElement('div');
+  banner.style.cssText = 'margin:0 0 16px;padding:12px 16px;background:linear-gradient(135deg,#fff0ea,#fff5f0);border:1px solid #ffd5c0;border-radius:12px;font-size:0.8rem;font-weight:700;color:var(--accent1);';
+  banner.textContent = '✨ 今回のフォーミュラー：' + formula.name + '（' + totalSteps + '投稿シリーズ）';
+  wrap.appendChild(banner);
+
+  for (let i = 0; i < totalSteps; i++) {
+    const step = formula.steps[i];
     const time = times[i];
-    const day = DAYS_JP[i];
+    const day = DAYS_JP[i] || `${i+1}日目`;
+
     const card = document.createElement('div');
     card.className = 'day-card';
     card.style.animationDelay = `${i * 0.05}s`;
@@ -1039,7 +1070,7 @@ async function generate() {
       <div class="day-header">
         <div class="day-label">
           <span class="day-num">DAY ${i+1} · ${day}</span>
-          <span class="day-angle angle-${angle}">${angle}</span>
+          <span class="day-angle angle-気づき" style="background:#f0eaff;color:#8a5fc9">${step.label}</span>
         </div>
         <span class="day-time">📅 ${time}</span>
       </div>
@@ -1049,7 +1080,7 @@ async function generate() {
       </div>`;
     wrap.appendChild(card);
 
-    generatePost(currentShop, angle).then(text => {
+    generatePost(currentShop, formulaKey, i).then(text => {
       document.getElementById(`body-${i}`).textContent = text;
       const copyBtn = document.getElementById(`copy-${i}`);
       copyBtn.disabled = false;
@@ -1060,7 +1091,7 @@ async function generate() {
   }
 
   btn.classList.remove('loading');
-  btn.innerHTML = '✨ 1週間分の投稿文を生成する';
+  btn.innerHTML = '✨ 投稿シリーズを生成する';
 }
 
 function copyPost(i) {
