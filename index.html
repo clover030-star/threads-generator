@@ -291,7 +291,7 @@
 <div class="header">
   <div>
     <div class="header-logo">Threads ジェネレーター</div>
-    <div class="header-sub">あなたの人格で投稿文を自動生成 v2.5</div>
+    <div class="header-sub">あなたの人格で投稿文を自動生成 v2.6</div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
     <button onclick="showScreen('products')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);font-family:'Zen Kaku Gothic New',sans-serif;font-size:0.72rem;font-weight:700;cursor:pointer;color:var(--muted);">📦 商品管理</button>
@@ -408,6 +408,9 @@
 
 <!-- 生成画面 -->
 <div class="screen" id="screen-gen">
+  <!-- ★ ペルソナ診断状況バナー -->
+  <div id="personaStatusBanner" style="margin:16px 20px 0;padding:10px 16px;border-radius:12px;font-size:0.78rem;font-weight:700;display:none;"></div>
+
   <div class="shop-tabs">
     <div class="shop-tab-wrap" id="tabWrap1">
       <button class="shop-tab active-1" id="tab1" onclick="toggleDropdown(1)">
@@ -756,6 +759,7 @@ function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   window.scrollTo(0, 0);
+  if (name === 'products') initProdShopSelect();
 }
 
 // ★ タブを指定して診断を開始
@@ -893,6 +897,8 @@ function showResult(type) {
 
 function goToGen() {
   updatePersonaIndicator();
+  renderModeButtons();
+  updateProductPreview();
   showScreen('gen');
 }
 
@@ -920,13 +926,44 @@ function updatePersonaIndicator() {
     piIcon.textContent = p.icon;
     piName.textContent = p.name;
     piDesc.textContent = p.desc.slice(0, 30) + '...';
-    piAction.innerHTML = `<span class="pi-change" onclick="startDiagnosisFromGen()">変更</span>`;
+    piAction.innerHTML = `<span class="pi-change" onclick="startDiagnosisFromGen()">再診断</span>`;
   } else {
     indicator.className = 'persona-indicator no-persona';
     piIcon.textContent = '❓';
     piName.textContent = '未診断';
     piDesc.textContent = '先に診断してキャラクターを設定してください';
     piAction.innerHTML = `<button class="pi-diagnose-btn tab${activeTab}" onclick="startDiagnosisFromGen()">診断する</button>`;
+  }
+
+  // ★ 両タブの診断状況バナーを更新
+  updatePersonaStatusBanner();
+}
+
+function updatePersonaStatusBanner() {
+  const banner = document.getElementById('personaStatusBanner');
+  if (!banner) return;
+  const p1 = tab1Persona ? PERSONA_TYPES[tab1Persona] : null;
+  const p2 = tab2Persona ? PERSONA_TYPES[tab2Persona] : null;
+
+  if (p1 && p2) {
+    // 両方診断済み
+    banner.style.display = 'block';
+    banner.style.background = '#eafff5';
+    banner.style.border = '1px solid #a0e0b0';
+    banner.style.color = '#2a8a4a';
+    banner.innerHTML = `✅ 両SHOP診断済み｜SHOP01: ${p1.icon}${p1.name}　SHOP02: ${p2.icon}${p2.name}`;
+  } else if (p1 || p2) {
+    // 片方だけ
+    const doneTab = p1 ? 1 : 2;
+    const doneP = p1 || p2;
+    const missingTab = p1 ? 2 : 1;
+    banner.style.display = 'block';
+    banner.style.background = '#fff8ea';
+    banner.style.border = '1px solid #ffd080';
+    banner.style.color = '#a06000';
+    banner.innerHTML = `⚠️ SHOP0${doneTab}: ${doneP.icon}${doneP.name}　｜　SHOP0${missingTab}: <span style="cursor:pointer;text-decoration:underline;" onclick="startDiagnosis(${missingTab})">未診断→今すぐ診断</span>`;
+  } else {
+    banner.style.display = 'none';
   }
 }
 
@@ -1369,12 +1406,7 @@ function resetShopProducts() {
   updateProductPreview();
 }
 
-// 画面切替でproductsを開いたときに初期化
-const _origShowScreen = showScreen;
-function showScreen(name) {
-  _origShowScreen(name);
-  if (name === 'products') initProdShopSelect();
-}
+// products画面を開いたときの初期化はshowScreen内で対応済み
 
 // モーダルの外側をタップで閉じる
 document.addEventListener('click', (e) => {
@@ -1398,16 +1430,26 @@ const saved2 = localStorage.getItem('persona_tab2');
 if (saved1) tab1Persona = saved1;
 if (saved2) tab2Persona = saved2;
 
-// 診断画面から開始（SHOP01用）
-diagnosisTarget = 1;
-const initBanner = document.getElementById('diagTargetBanner');
-initBanner.className = 'diag-target-banner tab1';
-initBanner.textContent = '📋 SHOP01（30代ママ）用のキャラクター診断';
-renderQuestion();
-showScreen('diag');
+// ★ 起動時：保存済みペルソナがあれば生成画面へ直行、なければ診断へ
 renderShopInfo();
 renderModeButtons();
 updateProductPreview();
+
+if (tab1Persona || tab2Persona) {
+  // どちらか1つでも診断済みなら生成画面へ
+  updatePersonaIndicator();
+  showScreen('gen');
+  // 未診断のタブがあればバッジで通知
+  renderQuestion(); // バックグラウンドで準備だけ
+} else {
+  // 両方未診断なら診断画面へ
+  diagnosisTarget = 1;
+  const initBanner = document.getElementById('diagTargetBanner');
+  initBanner.className = 'diag-target-banner tab1';
+  initBanner.textContent = '📋 SHOP01（30代ママ）用のキャラクター診断';
+  renderQuestion();
+  showScreen('diag');
+}
 </script>
 </body>
 </html>
