@@ -33,8 +33,6 @@
     min-height: 100vh;
     padding: 0 0 80px;
   }
-
-  /* Header */
   .header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -55,8 +53,6 @@
     background-clip: text;
   }
   .header-sub { font-size: 0.7rem; color: var(--muted); font-family: 'DM Mono', monospace; }
-
-  /* Personality badge in header */
   .persona-badge {
     display: none;
     align-items: center;
@@ -70,426 +66,124 @@
     cursor: pointer;
   }
   .persona-badge.show { display: flex; }
-
-  /* Screen management */
   .screen { display: none; }
   .screen.active { display: block; }
 
-  /* ===== DIAGNOSIS SCREEN ===== */
-  .diag-wrap {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 32px 20px;
-  }
+  /* ===== DIAGNOSIS ===== */
+  .diag-wrap { max-width: 600px; margin: 0 auto; padding: 32px 20px; }
   .diag-title {
-    text-align: center;
-    font-size: 1.4rem;
-    font-weight: 900;
-    margin-bottom: 8px;
-    background: var(--accent-grad);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    text-align: center; font-size: 1.4rem; font-weight: 900; margin-bottom: 8px;
+    background: var(--accent-grad); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .diag-subtitle {
-    text-align: center;
-    font-size: 0.82rem;
-    color: var(--muted);
-    margin-bottom: 32px;
-    line-height: 1.7;
+  .diag-target-banner {
+    display: none; text-align: center; margin-bottom: 12px;
+    padding: 8px 16px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
   }
-
-  /* Progress bar */
-  .progress-wrap {
-    margin-bottom: 28px;
-  }
-  .progress-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.72rem;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 8px;
-  }
-  .progress-bar {
-    height: 6px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--accent-grad);
-    border-radius: 3px;
-    transition: width 0.3s ease;
-  }
-
-  /* Question card */
-  .q-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-  }
-  .q-axis {
-    font-size: 0.65rem;
-    font-family: 'DM Mono', monospace;
-    color: var(--accent1);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
-  .q-text {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    line-height: 1.6;
-  }
-  .q-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .q-option {
-    padding: 14px 16px;
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 0.88rem;
-    line-height: 1.5;
-    transition: all 0.15s;
-    background: var(--surface);
-    text-align: left;
-  }
+  .diag-target-banner.tab1 { background: #fff0ea; color: var(--shop1); border: 1px solid #ffd5c0; display: block; }
+  .diag-target-banner.tab2 { background: #f0ebff; color: var(--shop2); border: 1px solid #d5c0ff; display: block; }
+  .diag-subtitle { text-align: center; font-size: 0.82rem; color: var(--muted); margin-bottom: 32px; line-height: 1.7; }
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); font-family: 'DM Mono', monospace; margin-bottom: 8px; }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent-grad); border-radius: 3px; transition: width 0.3s ease; }
+  .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); }
+  .q-axis { font-size: 0.65rem; font-family: 'DM Mono', monospace; color: var(--accent1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .q-text { font-size: 1rem; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .q-options { display: flex; flex-direction: column; gap: 10px; }
+  .q-option { padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 0.88rem; line-height: 1.5; transition: all 0.15s; background: var(--surface); text-align: left; }
   .q-option:hover { border-color: var(--accent1); background: #fff8f5; }
   .q-option.selected { border-color: var(--accent1); background: #fff0ea; font-weight: 700; }
-
-  .q-nav {
-    display: flex;
-    gap: 12px;
-    justify-content: space-between;
-    margin-top: 8px;
-  }
-  .q-btn {
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .q-btn-prev {
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    flex: 0 0 auto;
-  }
-  .q-btn-next {
-    border: none;
-    background: var(--accent-grad);
-    color: white;
-    flex: 1;
-  }
+  .q-nav { display: flex; gap: 12px; justify-content: space-between; margin-top: 8px; }
+  .q-btn { padding: 12px 24px; border-radius: 10px; font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .q-btn-prev { border: 1px solid var(--border); background: var(--surface); color: var(--muted); flex: 0 0 auto; }
+  .q-btn-next { border: none; background: var(--accent-grad); color: white; flex: 1; }
   .q-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* ===== RESULT SCREEN ===== */
-  .result-wrap {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 32px 20px;
-    text-align: center;
-  }
+  /* ===== RESULT ===== */
+  .result-wrap { max-width: 600px; margin: 0 auto; padding: 32px 20px; text-align: center; }
   .result-icon { font-size: 4rem; margin-bottom: 16px; }
-  .result-type {
-    font-size: 1.6rem;
-    font-weight: 900;
-    margin-bottom: 8px;
-    background: var(--accent-grad);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .result-desc {
-    font-size: 0.88rem;
-    color: var(--muted);
-    line-height: 1.8;
-    margin-bottom: 24px;
-  }
-  .result-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-    text-align: left;
-    box-shadow: var(--shadow);
-  }
-  .result-card-title {
-    font-size: 0.72rem;
-    font-family: 'DM Mono', monospace;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
-  .result-trait {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 12px;
-  }
-  .trait-tag {
-    padding: 4px 12px;
-    border-radius: 20px;
-    background: #fff0ea;
-    color: var(--accent1);
-    font-size: 0.75rem;
-    font-weight: 700;
-  }
-  .result-persona {
-    font-size: 0.85rem;
-    line-height: 1.8;
-    color: var(--text);
-  }
-  .result-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .btn-primary {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
-    background: var(--accent-grad);
-    color: white;
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    font-size: 1rem;
-    font-weight: 900;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .result-shop-badge { display: inline-block; margin-bottom: 16px; padding: 6px 18px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; }
+  .result-shop-badge.tab1 { background: #fff0ea; color: var(--shop1); border: 1px solid #ffd5c0; }
+  .result-shop-badge.tab2 { background: #f0ebff; color: var(--shop2); border: 1px solid #d5c0ff; }
+  .result-type { font-size: 1.6rem; font-weight: 900; margin-bottom: 8px; background: var(--accent-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .result-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.8; margin-bottom: 24px; }
+  .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: left; box-shadow: var(--shadow); }
+  .result-card-title { font-size: 0.72rem; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .result-trait { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .trait-tag { padding: 4px 12px; border-radius: 20px; background: #fff0ea; color: var(--accent1); font-size: 0.75rem; font-weight: 700; }
+  .result-persona { font-size: 0.85rem; line-height: 1.8; color: var(--text); }
+  .result-actions { display: flex; flex-direction: column; gap: 12px; }
+  .btn-primary { width: 100%; padding: 16px; border: none; border-radius: 12px; background: var(--accent-grad); color: white; font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 1rem; font-weight: 900; cursor: pointer; transition: all 0.2s; }
   .btn-primary:active { transform: scale(0.98); }
-  .btn-secondary {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--surface);
-    color: var(--muted);
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-  }
+  .btn-secondary { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--muted); font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+  .btn-other-shop { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .btn-other-shop.for-tab1 { color: var(--shop1); border-color: #ffd5c0; }
+  .btn-other-shop.for-tab2 { color: var(--shop2); border-color: #d5c0ff; }
 
-  /* ===== GENERATOR SCREEN ===== */
-  .shop-tabs {
-    display: flex;
-    gap: 0;
-    padding: 20px 20px 0;
-  }
+  /* ===== GENERATOR ===== */
+  .shop-tabs { display: flex; gap: 0; padding: 20px 20px 0; }
   .shop-tab-wrap { flex: 1; position: relative; }
-  .shop-tab {
-    width: 100%;
-    padding: 14px 16px;
-    border: 2px solid var(--border);
-    background: var(--surface);
-    cursor: pointer;
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--muted);
-    transition: all 0.2s;
-    text-align: center;
-    line-height: 1.4;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-  }
+  .shop-tab { width: 100%; padding: 14px 16px; border: 2px solid var(--border); background: var(--surface); cursor: pointer; font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--muted); transition: all 0.2s; text-align: center; line-height: 1.4; display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .shop-tab-wrap:first-child .shop-tab { border-radius: 12px 0 0 12px; }
-  .shop-tab-wrap:last-child .shop-tab  { border-radius: 0 12px 12px 0; border-left: none; }
+  .shop-tab-wrap:last-child .shop-tab { border-radius: 0 12px 12px 0; border-left: none; }
   .shop-tab.active-1 { background: #fff5f0; border-color: var(--shop1); color: var(--shop1); }
   .shop-tab.active-2 { background: #f5f0ff; border-color: var(--shop2); color: var(--shop2); }
   .tab-num { font-size: 0.6rem; font-family: 'DM Mono', monospace; opacity: 0.7; }
   .tab-arrow { font-size: 0.8rem; margin-top: 2px; transition: transform 0.2s; opacity: 0.7; }
   .tab-arrow.open { transform: rotate(180deg); }
-
-  .dropdown {
-    display: none;
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0; right: 0;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    z-index: 200;
-    overflow: hidden;
-  }
+  .dropdown { display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: white; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 200; overflow: hidden; }
   .dropdown.open { display: block; }
-  .dropdown-item {
-    padding: 12px 16px;
-    font-size: 0.82rem;
-    cursor: pointer;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-    font-weight: 700;
-  }
+  .dropdown-item { padding: 12px 16px; font-size: 0.82rem; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.15s; font-weight: 700; }
   .dropdown-item:last-child { border-bottom: none; }
   .dropdown-item:hover { background: var(--bg); }
   .dropdown-item.active-item { color: var(--accent1); background: #fff8f5; }
-
-  .shop-info {
-    margin: 16px 20px;
-    background: var(--surface);
-    border-radius: 14px;
-    padding: 16px 18px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .shop-badge {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.4rem; flex-shrink: 0;
-  }
+  .shop-info { margin: 16px 20px; background: var(--surface); border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border); box-shadow: var(--shadow); display: flex; align-items: center; gap: 14px; }
+  .shop-badge { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
   .shop-name { font-size: 0.85rem; font-weight: 900; margin-bottom: 3px; }
   .shop-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
 
-  /* Persona indicator */
-  .persona-indicator {
-    margin: 0 20px 16px;
-    background: linear-gradient(135deg, #fff0ea, #fff5f0);
-    border: 1px solid #ffd5c0;
-    border-radius: 12px;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.8rem;
-  }
+  /* ★ペルソナインジケーター（タブ別スタイル） */
+  .persona-indicator { margin: 0 20px 16px; background: linear-gradient(135deg, #fff0ea, #fff5f0); border: 1px solid #ffd5c0; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; font-size: 0.8rem; }
+  .persona-indicator.tab2-style { background: linear-gradient(135deg, #f0ebff, #f5f0ff); border-color: #d5c0ff; }
+  .persona-indicator.no-persona { background: #fdfcfa; border-color: var(--border); }
   .persona-indicator .pi-icon { font-size: 1.2rem; }
   .persona-indicator .pi-text { flex: 1; }
   .persona-indicator .pi-name { font-weight: 900; color: var(--accent1); }
+  .persona-indicator.tab2-style .pi-name { color: var(--shop2); }
+  .persona-indicator.no-persona .pi-name { color: var(--muted); }
   .persona-indicator .pi-desc { font-size: 0.72rem; color: var(--muted); }
-  .persona-indicator .pi-change {
-    font-size: 0.7rem;
-    color: var(--muted);
-    cursor: pointer;
-    text-decoration: underline;
-  }
+  .pi-change { font-size: 0.7rem; color: var(--muted); cursor: pointer; text-decoration: underline; white-space: nowrap; }
+  .pi-diagnose-btn { padding: 6px 14px; border-radius: 20px; border: none; font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.72rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .pi-diagnose-btn.tab1 { background: var(--accent-grad); color: white; }
+  .pi-diagnose-btn.tab2 { background: linear-gradient(135deg, #8a5fc9, #c95f8a); color: white; }
 
-  .apikey-wrap {
-    margin: 0 20px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-  }
-  .apikey-label {
-    font-size: 0.7rem; color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 8px; display: block;
-  }
-  .apikey-input {
-    width: 100%; padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.78rem; color: var(--text);
-    background: var(--bg); outline: none;
-  }
+  .apikey-wrap { margin: 0 20px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .apikey-label { font-size: 0.7rem; color: var(--muted); font-family: 'DM Mono', monospace; margin-bottom: 8px; display: block; }
+  .apikey-input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--text); background: var(--bg); outline: none; }
   .apikey-input:focus { border-color: var(--accent1); }
-
   .gen-wrap { padding: 0 20px 16px; }
-  .gen-btn {
-    width: 100%; padding: 18px;
-    border: none; border-radius: 14px;
-    background: var(--accent-grad);
-    color: white;
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    font-size: 1rem; font-weight: 900;
-    cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
+  .gen-btn { width: 100%; padding: 18px; border: none; border-radius: 14px; background: var(--accent-grad); color: white; font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 1rem; font-weight: 900; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .gen-btn:active { transform: scale(0.98); opacity: 0.9; }
   .gen-btn.shop1 { background: linear-gradient(135deg, #e8845a, #e85a8a); }
   .gen-btn.shop2 { background: linear-gradient(135deg, #8a5fc9, #c95f8a); }
   .gen-btn.loading { opacity: 0.7; pointer-events: none; }
-
-  .days-wrap {
-    padding: 0 20px;
-    display: flex; flex-direction: column; gap: 14px;
-  }
-  .day-card {
-    background: var(--surface);
-    border-radius: 16px; border: 1px solid var(--border);
-    overflow: hidden; box-shadow: var(--shadow);
-    animation: slideIn 0.4s ease forwards; opacity: 0;
-  }
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .day-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px; border-bottom: 1px solid var(--border);
-    background: #fdfcfa;
-  }
+  .days-wrap { padding: 0 20px; display: flex; flex-direction: column; gap: 14px; }
+  .day-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); animation: slideIn 0.4s ease forwards; opacity: 0; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .day-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); background: #fdfcfa; }
   .day-label { display: flex; align-items: center; gap: 8px; }
   .day-num { font-size: 0.65rem; font-family: 'DM Mono', monospace; color: var(--muted); }
-  .day-angle {
-    font-size: 0.72rem; font-weight: 700;
-    padding: 3px 10px; border-radius: 20px;
-  }
-  .angle-失敗談 { background: #fff0ea; color: #e8845a; }
-  .angle-気づき { background: #eafff5; color: #2a9d6a; }
-  .angle-ノウハウ { background: #eaf4ff; color: #3a7ec9; }
-  .angle-共感 { background: #ffeaf5; color: #c93a7e; }
-  .day-time {
-    font-size: 0.7rem; font-family: 'DM Mono', monospace;
-    color: var(--muted); background: var(--bg);
-    padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border);
-  }
-  .day-body {
-    padding: 14px 16px; font-size: 0.88rem;
-    line-height: 1.85; color: var(--text);
-    white-space: pre-wrap; word-break: break-word; min-height: 80px;
-  }
-  .day-footer {
-    padding: 10px 16px; border-top: 1px solid var(--border);
-    display: flex; justify-content: flex-end; gap: 8px;
-  }
-  .copy-btn {
-    padding: 8px 18px; border-radius: 8px;
-    border: 1px solid var(--border); background: white;
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    font-size: 0.78rem; font-weight: 700;
-    cursor: pointer; color: var(--muted); transition: all 0.15s;
-  }
+  .day-angle { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+  .day-time { font-size: 0.7rem; font-family: 'DM Mono', monospace; color: var(--muted); background: var(--bg); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border); }
+  .day-body { padding: 14px 16px; font-size: 0.88rem; line-height: 1.85; color: var(--text); white-space: pre-wrap; word-break: break-word; min-height: 80px; }
+  .day-footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+  .copy-btn { padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border); background: white; font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.78rem; font-weight: 700; cursor: pointer; color: var(--muted); transition: all 0.15s; }
   .copy-btn:active { transform: scale(0.96); }
   .copy-btn.copied { background: #eafff5; color: #2a9d6a; border-color: #2a9d6a; }
-
-  .empty {
-    text-align: center; padding: 40px 20px;
-    color: var(--muted); font-size: 0.85rem; line-height: 1.8;
-  }
+  .empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 0.85rem; line-height: 1.8; }
   .empty-icon { font-size: 2.5rem; margin-bottom: 12px; display: block; }
-
-  .spinner {
-    width: 18px; height: 18px;
-    border: 2px solid rgba(255,255,255,0.4);
-    border-top-color: white; border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
@@ -498,7 +192,7 @@
 <div class="header">
   <div>
     <div class="header-logo">Threads ジェネレーター</div>
-    <div class="header-sub">あなたの人格で投稿文を自動生成 v2.1</div>
+    <div class="header-sub">あなたの人格で投稿文を自動生成 v2.2</div>
   </div>
   <div class="persona-badge" id="personaBadge" onclick="showScreen('result')">
     <span id="badgeIcon">🌟</span>
@@ -507,21 +201,18 @@
   </div>
 </div>
 
-<!-- ===== 診断画面 ===== -->
+<!-- 診断画面 -->
 <div class="screen active" id="screen-diag">
   <div class="diag-wrap">
     <div class="diag-title">✨ 投稿キャラクター診断</div>
-    <div class="diag-subtitle">
-      30問の質問に答えて、あなただけの<br>投稿スタイルを見つけましょう。
-    </div>
+    <div class="diag-target-banner" id="diagTargetBanner"></div>
+    <div class="diag-subtitle">30問の質問に答えて、あなただけの<br>投稿スタイルを見つけましょう。</div>
     <div class="progress-wrap">
       <div class="progress-label">
         <span>Q<span id="qNum">1</span> / 30</span>
         <span id="qPct">0%</span>
       </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width:0%"></div>
-      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     </div>
     <div class="q-card">
       <div class="q-axis" id="qAxis"></div>
@@ -535,10 +226,11 @@
   </div>
 </div>
 
-<!-- ===== 結果画面 ===== -->
+<!-- 結果画面 -->
 <div class="screen" id="screen-result">
   <div class="result-wrap">
     <div class="result-icon" id="resultIcon">🌟</div>
+    <div class="result-shop-badge" id="resultShopBadge"></div>
     <div class="result-type" id="resultType"></div>
     <div class="result-desc" id="resultDesc"></div>
     <div class="result-card">
@@ -547,19 +239,15 @@
       <div class="result-persona" id="resultPersona"></div>
     </div>
     <div class="result-actions">
-      <button class="btn-primary" onclick="showScreen('gen')">
-        このキャラクターで投稿文を生成する ✨
-      </button>
-      <button class="btn-secondary" onclick="resetDiag()">
-        もう一度診断する
-      </button>
+      <button class="btn-primary" onclick="goToGen()">このキャラクターで投稿文を生成する ✨</button>
+      <button class="btn-other-shop" id="diagOtherShopBtn" onclick="diagOtherShop()"></button>
+      <button class="btn-secondary" onclick="resetDiag()">もう一度診断する（現在のSHOP用）</button>
     </div>
   </div>
 </div>
 
-<!-- ===== 生成画面 ===== -->
+<!-- 生成画面 -->
 <div class="screen" id="screen-gen">
-
   <div class="shop-tabs">
     <div class="shop-tab-wrap" id="tabWrap1">
       <button class="shop-tab active-1" id="tab1" onclick="toggleDropdown(1)">
@@ -599,36 +287,28 @@
   <div class="persona-indicator" id="personaIndicator">
     <div class="pi-icon" id="piIcon">🌟</div>
     <div class="pi-text">
-      <div class="pi-name" id="piName">診断中...</div>
-      <div class="pi-desc" id="piDesc">このキャラクターで投稿文を生成します</div>
+      <div class="pi-name" id="piName">未診断</div>
+      <div class="pi-desc" id="piDesc">診断してからキャラクターを設定してください</div>
     </div>
-    <div class="pi-change" onclick="showScreen('result')">変更</div>
+    <div id="piAction"></div>
   </div>
 
   <div class="apikey-wrap">
     <label class="apikey-label">🔑 OpenAI APIキー（必須）</label>
     <input class="apikey-input" type="password" id="apiKey" placeholder="sk-..." />
-    <div style="font-size:0.68rem;color:var(--muted);margin-top:6px;font-family:'DM Mono',monospace;">
-      ※ platform.openai.com でAPIキーを取得してください
-    </div>
+    <div style="font-size:0.68rem;color:var(--muted);margin-top:6px;font-family:'DM Mono',monospace;">※ platform.openai.com でAPIキーを取得してください</div>
   </div>
 
   <div class="gen-wrap">
-    <button class="gen-btn shop1" id="genBtn" onclick="generate()">
-      ✨ 1週間分の投稿文を生成する
-    </button>
+    <button class="gen-btn shop1" id="genBtn" onclick="generate()">✨ 1週間分の投稿文を生成する</button>
   </div>
 
   <div class="days-wrap" id="daysWrap">
-    <div class="empty">
-      <span class="empty-icon">✍️</span>
-      上のボタンを押すと<br>7日分の投稿文が自動生成されます
-    </div>
+    <div class="empty"><span class="empty-icon">✍️</span>上のボタンを押すと<br>7日分の投稿文が自動生成されます</div>
   </div>
 </div>
 
 <script>
-// ===== QUESTIONS =====
 const QUESTIONS = [
   { axis: '軸1：発信スタイル', q: '投稿するとき、どんな気持ちで書きますか？', opts: ['みんなに読んでほしい！シェアしてほしい！', '誰かの役に立てればいいな', '自分の記録として残したい', '共感してくれる人に届けばいい'] },
   { axis: '軸1：発信スタイル', q: 'フォロワーからコメントが来たら？', opts: ['すぐ返信！会話を楽しみたい', '丁寧に返したいので少し考えてから返す', '嬉しいけど何て返せばいいか迷う', '共感コメントには特に嬉しくなる'] },
@@ -662,7 +342,6 @@ const QUESTIONS = [
   { axis: '軸4：コンテンツの方向性', q: '最終的に目指したいのは？', opts: ['読者の心に残る投稿者', '信頼される情報発信者', '実生活を変えるヒントを届ける人', '共感で繋がるコミュニティを作る人'] },
 ];
 
-// ===== PERSONA TYPES =====
 const PERSONA_TYPES = {
   'sun':    { icon: '🌟', name: '太陽ママ型', desc: '明るく感情豊か。読者の心を温めるのが得意。失敗談も笑いに変える元気の源。', traits: ['感情豊か', '行動力◎', 'ユーモアあり'], tone: '明るく元気いっぱい、失敗談も笑いに変える。語尾は「〜だよ！」「〜だった！」。感嘆符を効果的に使う。' },
   'sage':   { icon: '📚', name: '知識派ママ型', desc: '論理的で情報重視。信頼できる専門家として読者から頼られる存在。', traits: ['論理的', '情報重視', '信頼感◎'], tone: '丁寧で信頼感のある文体。「〜と言われています」「〜という研究があります」など根拠を示す表現。' },
@@ -674,98 +353,78 @@ const PERSONA_TYPES = {
   'community':{ icon: '🤝', name: '仲間集めママ型', desc: 'コミュニティ重視。「一緒に」という感覚を大切にし、読者と対等な関係を築く。', traits: ['コミュニティ◎', '対等関係', '仲間意識'], tone: '対等で親しみやすい文体。「一緒に〜しよう」「みんなはどう？」など読者を巻き込む表現。問いかけを多用。' },
 };
 
-// ===== SHOPS =====
 const SHOPS = {
-  1: { name: '30代ママ × 時短・QOL爆上げ', handle: '@15min.magical.mom', icon: '👶', target: '1歳と3歳を育てる30代ママ', theme: '育児の時短・QOL向上・便利グッズ', keywords: ['時短', '15分', 'ワンオペ', '育児グッズ', '便利アイテム', '子育て', '自分時間'], products: ['時短家電', '便利グッズ', '宅配食材サービス', '育児アイテム'], color: 'shop1', accent: '#e8845a' },
-  2: { name: '40代ママ × 更年期・美容・体の変化', handle: '@mama.body.reset40', icon: '🌸', target: '子育て中の40代ママ', theme: '更年期・産後ボディ・スキンケア・体の変化', keywords: ['40代', '更年期', 'スキンケア', 'ダイエット', '骨盤', '美容', 'サプリ'], products: ['スキンケア', 'サプリメント', '骨盤ケアグッズ', '美容家電'], color: 'shop2', accent: '#8a5fc9' },
-  3: { name: '30代ママ × 産後ダイエット・美容', handle: '@30mama.beauty.reset', icon: '💪', target: '出産後の30代ママ', theme: '産後ダイエット・スキンケア・ボディケア', keywords: ['産後', 'ダイエット', 'スキンケア', '美容', '骨盤矯正', 'ボディケア'], products: ['スキンケア', 'ダイエットサプリ', '骨盤ベルト', '美容家電'], color: 'shop1', accent: '#e85a8a' },
-  4: { name: '30代ママ × 節約・知育・教育費', handle: '@30mama.money.edu', icon: '💰', target: '30代子育て中ママ', theme: '節約・教育費・知育玩具・家計管理', keywords: ['節約', '教育費', '知育', '学習', 'コスパ', '家計管理', 'ポイ活'], products: ['知育玩具', '学習教材', '節約グッズ', '収納アイテム'], color: 'shop1', accent: '#5a9ae8' },
-  5: { name: '30代ママ × メンタル・ストレスケア', handle: '@30mama.mental.care', icon: '🧘', target: '育児疲れの30代ママ', theme: '育児ストレス・メンタルケア・リラックス・睡眠', keywords: ['ストレス', '育児疲れ', '睡眠', 'リラックス', 'メンタル', 'セルフケア', '癒し'], products: ['アロマ', 'バスグッズ', '睡眠グッズ', 'リラックスアイテム'], color: 'shop1', accent: '#8a5fc9' },
-  6: { name: '30代ママ × 離乳食・子どもの食事', handle: '@30mama.babyfood', icon: '🍱', target: '乳幼児を育てる30代ママ', theme: '離乳食・幼児食・食育・時短調理', keywords: ['離乳食', '幼児食', '食育', '時短調理', '子ども', '栄養', 'ベビーフード'], products: ['調理器具', 'ベビーフード', '食器', '離乳食グッズ'], color: 'shop1', accent: '#e8a85a' },
-  7: { name: '30代ママ × キャリア・副業', handle: '@30mama.career', icon: '💼', target: 'キャリアを考える30代ママ', theme: '在宅ワーク・副業・スキルアップ・育休復帰', keywords: ['副業', '在宅ワーク', 'キャリア', 'スキルアップ', '育休復帰', '資格'], products: ['PCグッズ', 'デスク周り', 'ビジネス書籍', '学習ツール'], color: 'shop1', accent: '#3a7ec9' },
-  8: { name: '30代ママ × 夫婦関係・パートナー', handle: '@30mama.couple', icon: '💑', target: '夫婦関係に悩む30代ママ', theme: '夫婦関係・コミュニケーション・二人時間・家事分担', keywords: ['夫婦', '家事分担', 'パートナー', '二人時間', 'コミュニケーション', 'ギフト'], products: ['ペアグッズ', 'ギフト', 'インテリア', 'ファッション'], color: 'shop1', accent: '#c95f8a' },
-  9: { name: '40代ママ × 暮らし・インテリア', handle: '@40mama.lifestyle', icon: '🏠', target: '40代子育て中ママ', theme: '丁寧な暮らし・インテリア・収納・家事効率化', keywords: ['インテリア', '収納', '丁寧な暮らし', '家事', '整理整頓', 'おしゃれ'], products: ['収納グッズ', 'インテリア雑貨', '家事アイテム', 'キッチン用品'], color: 'shop2', accent: '#5ac98a' },
-  10: { name: '40代ママ × セルフケア・自分時間', handle: '@40mama.selfcare', icon: '❤️', target: '40代子育て中ママ', theme: '自分時間・リラックス・セルフケア・ご褒美', keywords: ['セルフケア', 'リラックス', '自分時間', '癒し', 'ご褒美', '40代'], products: ['アロマ', 'バスグッズ', 'リラックスアイテム', 'ファッション'], color: 'shop2', accent: '#c95f5f' },
-  11: { name: '40代ママ × 健康・サプリ・食生活', handle: '@40mama.health', icon: '🌿', target: '健康意識の高い40代ママ', theme: '健康管理・サプリ・食生活・体の不調ケア', keywords: ['健康', 'サプリ', '食生活', '体の不調', '免疫', '腸活', 'オーガニック'], products: ['サプリメント', '健康食品', 'オーガニック食品', '健康器具'], color: 'shop2', accent: '#5ac95a' },
-  12: { name: '40代ママ × ダイエット・体型維持', handle: '@40mama.diet', icon: '✨', target: '体型が気になる40代ママ', theme: '40代からのダイエット・筋トレ・体型維持・代謝アップ', keywords: ['40代', 'ダイエット', '筋トレ', '代謝', '体型維持', '痩せ', 'エクサ'], products: ['ダイエットサプリ', 'エクサグッズ', 'プロテイン', '美容家電'], color: 'shop2', accent: '#c98a5a' },
-  13: { name: '40代ママ × 親の介護・準備', handle: '@40mama.care', icon: '🤝', target: '親の介護が心配な40代ママ', theme: '親の介護準備・介護グッズ・家族の健康・老後準備', keywords: ['介護', '親', '老後', '健康', '準備', '家族', 'サポート'], products: ['介護グッズ', '健康器具', 'サプリメント', '安全グッズ'], color: 'shop2', accent: '#7a8ac9' },
+  1: { name: '30代ママ × 時短・QOL爆上げ', handle: '@15min.magical.mom', icon: '👶', target: '1歳と3歳を育てる30代ママ', theme: '育児の時短・QOL向上・便利グッズ', keywords: ['時短', '15分', 'ワンオペ', '育児グッズ', '便利アイテム', '子育て', '自分時間'], color: 'shop1', accent: '#e8845a' },
+  2: { name: '40代ママ × 更年期・美容・体の変化', handle: '@mama.body.reset40', icon: '🌸', target: '子育て中の40代ママ', theme: '更年期・産後ボディ・スキンケア・体の変化', keywords: ['40代', '更年期', 'スキンケア', 'ダイエット', '骨盤', '美容', 'サプリ'], color: 'shop2', accent: '#8a5fc9' },
+  3: { name: '30代ママ × 産後ダイエット・美容', handle: '@30mama.beauty.reset', icon: '💪', target: '出産後の30代ママ', theme: '産後ダイエット・スキンケア・ボディケア', keywords: ['産後', 'ダイエット', 'スキンケア', '美容', '骨盤矯正', 'ボディケア'], color: 'shop1', accent: '#e85a8a' },
+  4: { name: '30代ママ × 節約・知育・教育費', handle: '@30mama.money.edu', icon: '💰', target: '30代子育て中ママ', theme: '節約・教育費・知育玩具・家計管理', keywords: ['節約', '教育費', '知育', '学習', 'コスパ', '家計管理', 'ポイ活'], color: 'shop1', accent: '#5a9ae8' },
+  5: { name: '30代ママ × メンタル・ストレスケア', handle: '@30mama.mental.care', icon: '🧘', target: '育児疲れの30代ママ', theme: '育児ストレス・メンタルケア・リラックス・睡眠', keywords: ['ストレス', '育児疲れ', '睡眠', 'リラックス', 'メンタル', 'セルフケア', '癒し'], color: 'shop1', accent: '#8a5fc9' },
+  6: { name: '30代ママ × 離乳食・子どもの食事', handle: '@30mama.babyfood', icon: '🍱', target: '乳幼児を育てる30代ママ', theme: '離乳食・幼児食・食育・時短調理', keywords: ['離乳食', '幼児食', '食育', '時短調理', '子ども', '栄養', 'ベビーフード'], color: 'shop1', accent: '#e8a85a' },
+  7: { name: '30代ママ × キャリア・副業', handle: '@30mama.career', icon: '💼', target: 'キャリアを考える30代ママ', theme: '在宅ワーク・副業・スキルアップ・育休復帰', keywords: ['副業', '在宅ワーク', 'キャリア', 'スキルアップ', '育休復帰', '資格'], color: 'shop1', accent: '#3a7ec9' },
+  8: { name: '30代ママ × 夫婦関係・パートナー', handle: '@30mama.couple', icon: '💑', target: '夫婦関係に悩む30代ママ', theme: '夫婦関係・コミュニケーション・二人時間・家事分担', keywords: ['夫婦', '家事分担', 'パートナー', '二人時間', 'コミュニケーション', 'ギフト'], color: 'shop1', accent: '#c95f8a' },
+  9: { name: '40代ママ × 暮らし・インテリア', handle: '@40mama.lifestyle', icon: '🏠', target: '40代子育て中ママ', theme: '丁寧な暮らし・インテリア・収納・家事効率化', keywords: ['インテリア', '収納', '丁寧な暮らし', '家事', '整理整頓', 'おしゃれ'], color: 'shop2', accent: '#5ac98a' },
+  10: { name: '40代ママ × セルフケア・自分時間', handle: '@40mama.selfcare', icon: '❤️', target: '40代子育て中ママ', theme: '自分時間・リラックス・セルフケア・ご褒美', keywords: ['セルフケア', 'リラックス', '自分時間', '癒し', 'ご褒美', '40代'], color: 'shop2', accent: '#c95f5f' },
+  11: { name: '40代ママ × 健康・サプリ・食生活', handle: '@40mama.health', icon: '🌿', target: '健康意識の高い40代ママ', theme: '健康管理・サプリ・食生活・体の不調ケア', keywords: ['健康', 'サプリ', '食生活', '体の不調', '免疫', '腸活', 'オーガニック'], color: 'shop2', accent: '#5ac95a' },
+  12: { name: '40代ママ × ダイエット・体型維持', handle: '@40mama.diet', icon: '✨', target: '体型が気になる40代ママ', theme: '40代からのダイエット・筋トレ・体型維持・代謝アップ', keywords: ['40代', 'ダイエット', '筋トレ', '代謝', '体型維持', '痩せ', 'エクサ'], color: 'shop2', accent: '#c98a5a' },
+  13: { name: '40代ママ × 親の介護・準備', handle: '@40mama.care', icon: '🤝', target: '親の介護が心配な40代ママ', theme: '親の介護準備・介護グッズ・家族の健康・老後準備', keywords: ['介護', '親', '老後', '健康', '準備', '家族', 'サポート'], color: 'shop2', accent: '#7a8ac9' },
 };
 
-const DAYS_JP = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日', '8日目', '9日目', '10日目', '11日目', '12日目', '13日目', '14日目'];
+const DAYS_JP = ['月曜日','火曜日','水曜日','木曜日','金曜日','土曜日','日曜日','8日目','9日目','10日目','11日目','12日目','13日目','14日目'];
 
-// ===== FORMULAS =====
 const FORMULAS = {
-  QUEST: {
-    name: 'QUEST',
-    steps: [
-      { label: 'Qualify', desc: 'ターゲットを絞り込む投稿。「これは〇〇で悩んでいる人だけに読んでほしい」という切り出しで始める。共感で引きつけ、自分事だと思わせる。' },
-      { label: 'Understand', desc: '深く共感する投稿。読者の悩みを代弁し「私だけじゃなかった」と思わせる。感情に寄り添う。煽りは一切なし。' },
-      { label: 'Educate', desc: '知識・気づきを与える投稿。「実はこういう仕組みだった」という新しい視点を提供。押しつけず、発見として伝える。' },
-      { label: 'Educate深掘り', desc: '具体的なノウハウ投稿。箇条書きで実践的な内容を伝える。読者がすぐ試せる内容にする。' },
-      { label: 'Stimulate', desc: '変化・結果を伝える投稿。「やってみたら〇〇が変わった」という体験談。過度な煽りは避け、温かく背中を押すトーンで。' },
-      { label: 'Transition', desc: '自然な行動促進。「気になった方はプロフリンクへ」程度の柔らかい誘導。押しつけず、選択肢を提示するトーンで。' },
-    ]
-  },
-  SOS: {
-    name: 'Soap Opera Sequence',
-    steps: [
-      { label: 'Set the Stage', desc: '舞台設定投稿。「1年前の私は〇〇でした」という過去の状況描写。読者が「私もそう！」と思える具体的なシーンから始める。' },
-      { label: 'High Drama', desc: '感情的なクライマックス。「そのとき〇〇が起きた」という転換点。ドラマチックだが嘘っぽくならない、リアルな感情表現。' },
-      { label: 'Epiphany', desc: '気づきの投稿。「そこで気づいた、問題は〇〇じゃなかった」という発見。読者の常識をやさしくひっくり返す。' },
-      { label: 'Hidden Benefits', desc: '想定外のメリット投稿。「変えたら〇〇まで変わった」という嬉しい副産物を伝える。読者の期待を上回る内容。' },
-      { label: 'Urgency', desc: '軽い緊急性。「知らないともったいない」程度の柔らかい表現。脅しや煽りは一切使わず、純粋に「早く知ってほしい」気持ちで書く。' },
-      { label: 'Call to Action', desc: 'やわらかい行動促進。「よかったらプロフリンクも見てみてね」程度。強制感ゼロ、友人に伝えるようなトーン。' },
-    ]
-  },
-  PASONA: {
-    name: 'PASONA',
-    steps: [
-      { label: 'Problem', desc: '問題提起投稿。読者の日常にある悩みを具体的な場面で描写。「あるある」と思わせる。責めず、寄り添いながら問題を提示。' },
-      { label: 'Agitation', desc: '問題の深刻さを伝える投稿。「このままだと〇〇になるかも」という未来への懸念。ただし恐怖を煽るのではなく、「気づきを促す」トーンで柔らかく表現。' },
-      { label: 'Solution', desc: '解決策の提示。「こうしたら変わった」という体験ベースの解決策。押しつけず「こんな方法もあるよ」という提案スタイル。' },
-      { label: 'Offer', desc: '具体的な提案投稿。実際に使ったグッズや方法を紹介。楽天で買えるものに自然につながる内容。' },
-      { label: 'Narrowing down', desc: 'ターゲットを絞る投稿。「特に〇〇なママには試してほしい」という絞り込み。読者が「私のことだ」と感じるよう具体的に。' },
-      { label: 'Action', desc: '自然な行動促進。「詳しくはプロフリンクへ」という柔らかい誘導。感謝の気持ちと共に締めくくる。' },
-    ]
-  },
-  AICPBSAWN: {
-    name: 'AICPBSAWN',
-    steps: [
-      { label: 'Attention', desc: '注目を集める投稿。冒頭3行で「これは私のことだ」と思わせる。具体的な場面や数字を使う。' },
-      { label: 'Interest', desc: '興味を深める投稿。「なぜそうなるのか」という理由や背景を伝える。知的好奇心をくすぐる内容。' },
-      { label: 'Credibility', desc: '信頼性を高める投稿。自分の体験・失敗・変化を正直に話す。完璧を装わず、リアルな人間味を見せる。' },
-      { label: 'Prove', desc: '証拠を示す投稿。「実際にやってみた結果」や「フォロワーさんの声」を紹介。具体的な変化を伝える。' },
-      { label: 'Benefits', desc: 'メリットを伝える投稿。「使うとどう変わるか」を読者目線で具体的に。スペックではなく生活への変化を中心に。' },
-      { label: 'Scarcity', desc: '柔らかい希少性。「この情報を知ってるママはまだ少ない」程度の表現。プレッシャーを与えず、特別感を演出。' },
-      { label: 'Action', desc: '行動を促す投稿。「一つだけ試してみて」という小さな行動提案。高いハードルを設けない。' },
-      { label: 'Warn', desc: '優しい警告。「知らないと損かも」程度の柔らかい表現。怖がらせるのではなく、背中をそっと押すトーン。' },
-      { label: 'Now', desc: '今すぐ感の演出。「今日から始める人が3ヶ月後に笑ってる」という前向きな表現。急かさず、可能性を示す。' },
-    ]
-  },
-  SB7: {
-    name: 'StoryBrand SB7',
-    steps: [
-      { label: 'Character', desc: 'キャラクター（読者）の欲求を描く投稿。「〇〇したいと思っているあなたへ」という切り出し。主役は読者、自分はガイドという姿勢。' },
-      { label: 'Problem', desc: '問題を3層で描く投稿。外的問題（目に見える悩み）、内的問題（感情的な悩み）、哲学的問題（なぜこれは不公平か）を柔らかく提示。' },
-      { label: 'Guide', desc: 'ガイドとしての自己紹介。「私も同じ悩みを持っていた」という共感と「でも解決できた」という実績。上から目線にならず対等なトーンで。' },
-      { label: 'Plan', desc: '計画・ステップを示す投稿。「3つのステップで変わった」という具体的な道筋。読者が「私にもできそう」と思える内容。' },
-      { label: 'Action', desc: '行動を促す投稿。「プロフリンクを見てみて」という直接的だが押しつけない誘導。' },
-      { label: 'Avoid Failure', desc: '失敗回避の投稿。「やらなかった場合どうなるか」を柔らかく描写。怖がらせず、気づきを促す。' },
-      { label: 'Success', desc: '成功イメージの投稿。「こんな未来が待っている」という明るいビジョン。読者が自分の未来を想像できる具体的な描写。' },
-    ]
-  },
-  NORMAL: {
-    name: '通常版',
-    steps: [
-      { label: '失敗談', desc: '失敗談から始まる共感投稿。具体的な場面描写で冒頭3行で引きつける。最後は「明日〇〇をシェアします」の寸止め。' },
-      { label: '気づき', desc: '常識をひっくり返す気づき投稿。「実は〇〇だと思っていたけど」という構造。読者の視点を変える。' },
-      { label: 'ノウハウ', desc: '実践的なノウハウ投稿。箇条書きで具体的なTipsを紹介。保存したくなる実用的な内容。' },
-      { label: '共感', desc: '感情的な共感投稿。読者の気持ちを代弁し「わかる！」と思わせる。希望と前向きなメッセージで締める。' },
-      { label: '気づき2', desc: '2つ目の気づき投稿。別の角度から常識をひっくり返す。' },
-      { label: 'ノウハウ2', desc: '2つ目のノウハウ投稿。異なるテーマの実践的なTips。' },
-      { label: '失敗談2', desc: '2つ目の失敗談投稿。別のエピソードで共感を集める。' },
-    ]
-  }
+  QUEST: { name: 'QUEST', steps: [
+    { label: 'Qualify', desc: 'ターゲットを絞り込む投稿。「これは〇〇で悩んでいる人だけに読んでほしい」という切り出しで始める。共感で引きつけ、自分事だと思わせる。' },
+    { label: 'Understand', desc: '深く共感する投稿。読者の悩みを代弁し「私だけじゃなかった」と思わせる。感情に寄り添う。煽りは一切なし。' },
+    { label: 'Educate', desc: '知識・気づきを与える投稿。「実はこういう仕組みだった」という新しい視点を提供。押しつけず、発見として伝える。' },
+    { label: 'Educate深掘り', desc: '具体的なノウハウ投稿。箇条書きで実践的な内容を伝える。読者がすぐ試せる内容にする。' },
+    { label: 'Stimulate', desc: '変化・結果を伝える投稿。「やってみたら〇〇が変わった」という体験談。過度な煽りは避け、温かく背中を押すトーンで。' },
+    { label: 'Transition', desc: '自然な行動促進。「気になった方はプロフリンクへ」程度の柔らかい誘導。押しつけず、選択肢を提示するトーンで。' },
+  ]},
+  SOS: { name: 'Soap Opera Sequence', steps: [
+    { label: 'Set the Stage', desc: '舞台設定投稿。「1年前の私は〇〇でした」という過去の状況描写。読者が「私もそう！」と思える具体的なシーンから始める。' },
+    { label: 'High Drama', desc: '感情的なクライマックス。「そのとき〇〇が起きた」という転換点。ドラマチックだが嘘っぽくならない、リアルな感情表現。' },
+    { label: 'Epiphany', desc: '気づきの投稿。「そこで気づいた、問題は〇〇じゃなかった」という発見。読者の常識をやさしくひっくり返す。' },
+    { label: 'Hidden Benefits', desc: '想定外のメリット投稿。「変えたら〇〇まで変わった」という嬉しい副産物を伝える。読者の期待を上回る内容。' },
+    { label: 'Urgency', desc: '軽い緊急性。「知らないともったいない」程度の柔らかい表現。脅しや煽りは一切使わず、純粋に「早く知ってほしい」気持ちで書く。' },
+    { label: 'Call to Action', desc: 'やわらかい行動促進。「よかったらプロフリンクも見てみてね」程度。強制感ゼロ、友人に伝えるようなトーン。' },
+  ]},
+  PASONA: { name: 'PASONA', steps: [
+    { label: 'Problem', desc: '問題提起投稿。読者の日常にある悩みを具体的な場面で描写。「あるある」と思わせる。' },
+    { label: 'Agitation', desc: '問題の深刻さを伝える投稿。「このままだと〇〇になるかも」という未来への懸念。恐怖を煽らず、気づきを促すトーンで。' },
+    { label: 'Solution', desc: '解決策の提示。「こうしたら変わった」という体験ベースの解決策。押しつけず「こんな方法もあるよ」という提案スタイル。' },
+    { label: 'Offer', desc: '具体的な提案投稿。実際に使ったグッズや方法を紹介。楽天で買えるものに自然につながる内容。' },
+    { label: 'Narrowing down', desc: 'ターゲットを絞る投稿。「特に〇〇なママには試してほしい」という絞り込み。' },
+    { label: 'Action', desc: '自然な行動促進。「詳しくはプロフリンクへ」という柔らかい誘導。感謝の気持ちと共に締めくくる。' },
+  ]},
+  AICPBSAWN: { name: 'AICPBSAWN', steps: [
+    { label: 'Attention', desc: '注目を集める投稿。冒頭3行で「これは私のことだ」と思わせる。具体的な場面や数字を使う。' },
+    { label: 'Interest', desc: '興味を深める投稿。「なぜそうなるのか」という理由や背景を伝える。知的好奇心をくすぐる内容。' },
+    { label: 'Credibility', desc: '信頼性を高める投稿。自分の体験・失敗・変化を正直に話す。完璧を装わず、リアルな人間味を見せる。' },
+    { label: 'Prove', desc: '証拠を示す投稿。「実際にやってみた結果」や「フォロワーさんの声」を紹介。具体的な変化を伝える。' },
+    { label: 'Benefits', desc: 'メリットを伝える投稿。「使うとどう変わるか」を読者目線で具体的に。スペックではなく生活への変化を中心に。' },
+    { label: 'Scarcity', desc: '柔らかい希少性。「この情報を知ってるママはまだ少ない」程度の表現。プレッシャーを与えず、特別感を演出。' },
+    { label: 'Action', desc: '行動を促す投稿。「一つだけ試してみて」という小さな行動提案。高いハードルを設けない。' },
+    { label: 'Warn', desc: '優しい警告。「知らないと損かも」程度の柔らかい表現。怖がらせるのではなく、背中をそっと押すトーン。' },
+    { label: 'Now', desc: '今すぐ感の演出。「今日から始める人が3ヶ月後に笑ってる」という前向きな表現。急かさず、可能性を示す。' },
+  ]},
+  SB7: { name: 'StoryBrand SB7', steps: [
+    { label: 'Character', desc: 'キャラクター（読者）の欲求を描く投稿。「〇〇したいと思っているあなたへ」という切り出し。主役は読者、自分はガイドという姿勢。' },
+    { label: 'Problem', desc: '問題を3層で描く投稿。外的問題・内的問題・哲学的問題を柔らかく提示。' },
+    { label: 'Guide', desc: 'ガイドとしての自己紹介。「私も同じ悩みを持っていた」という共感と「でも解決できた」という実績。' },
+    { label: 'Plan', desc: '計画・ステップを示す投稿。「3つのステップで変わった」という具体的な道筋。' },
+    { label: 'Action', desc: '行動を促す投稿。「プロフリンクを見てみて」という直接的だが押しつけない誘導。' },
+    { label: 'Avoid Failure', desc: '失敗回避の投稿。「やらなかった場合どうなるか」を柔らかく描写。怖がらせず、気づきを促す。' },
+    { label: 'Success', desc: '成功イメージの投稿。「こんな未来が待っている」という明るいビジョン。' },
+  ]},
+  NORMAL: { name: '通常版', steps: [
+    { label: '失敗談', desc: '失敗談から始まる共感投稿。具体的な場面描写で冒頭3行で引きつける。最後は「明日〇〇をシェアします」の寸止め。' },
+    { label: '気づき', desc: '常識をひっくり返す気づき投稿。「実は〇〇だと思っていたけど」という構造。読者の視点を変える。' },
+    { label: 'ノウハウ', desc: '実践的なノウハウ投稿。箇条書きで具体的なTipsを紹介。保存したくなる実用的な内容。' },
+    { label: '共感', desc: '感情的な共感投稿。読者の気持ちを代弁し「わかる！」と思わせる。希望と前向きなメッセージで締める。' },
+    { label: '気づき2', desc: '2つ目の気づき投稿。別の角度から常識をひっくり返す。' },
+    { label: 'ノウハウ2', desc: '2つ目のノウハウ投稿。異なるテーマの実践的なTips。' },
+    { label: '失敗談2', desc: '2つ目の失敗談投稿。別のエピソードで共感を集める。' },
+  ]},
 };
 
 function selectFormula() {
@@ -776,16 +435,38 @@ function selectFormula() {
 // ===== STATE =====
 let currentQ = 0;
 let answers = new Array(30).fill(null);
-let currentPersona = null;
+// ★ タブごとに独立したペルソナ
+let tab1Persona = null;
+let tab2Persona = null;
+let diagnosisTarget = 1; // 診断中のタブ（1 or 2）
+let activeTab = 1;       // 現在表示中のタブ
 let currentShop = 1;
 let currentTab1Shop = 1;
 let currentTab2Shop = 2;
 
-// ===== DIAGNOSIS =====
+function getActivePersona() {
+  return activeTab === 1 ? tab1Persona : tab2Persona;
+}
+
+// ===== SCREENS =====
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   window.scrollTo(0, 0);
+}
+
+// ★ タブを指定して診断を開始
+function startDiagnosis(tabNum) {
+  diagnosisTarget = tabNum;
+  currentQ = 0;
+  answers = new Array(30).fill(null);
+  const banner = document.getElementById('diagTargetBanner');
+  banner.className = 'diag-target-banner tab' + tabNum;
+  banner.textContent = tabNum === 1
+    ? '📋 SHOP01（30代ママ）用のキャラクター診断'
+    : '📋 SHOP02（40代ママ）用のキャラクター診断';
+  renderQuestion();
+  showScreen('diag');
 }
 
 function renderQuestion() {
@@ -795,7 +476,6 @@ function renderQuestion() {
   document.getElementById('progressFill').style.width = (currentQ / 30 * 100) + '%';
   document.getElementById('qAxis').textContent = q.axis;
   document.getElementById('qText').textContent = q.q;
-
   const opts = document.getElementById('qOptions');
   opts.innerHTML = '';
   q.opts.forEach((opt, i) => {
@@ -805,7 +485,6 @@ function renderQuestion() {
     btn.onclick = () => selectAnswer(i);
     opts.appendChild(btn);
   });
-
   document.getElementById('prevBtn').disabled = currentQ === 0;
   document.getElementById('nextBtn').disabled = answers[currentQ] === null;
   document.getElementById('nextBtn').textContent = currentQ === 29 ? '診断する ✨' : '次へ →';
@@ -813,18 +492,13 @@ function renderQuestion() {
 
 function selectAnswer(i) {
   answers[currentQ] = i;
-  document.querySelectorAll('.q-option').forEach((btn, idx) => {
-    btn.classList.toggle('selected', idx === i);
-  });
+  document.querySelectorAll('.q-option').forEach((btn, idx) => btn.classList.toggle('selected', idx === i));
   document.getElementById('nextBtn').disabled = false;
 }
 
 function nextQ() {
   if (answers[currentQ] === null) return;
-  if (currentQ === 29) {
-    calcResult();
-    return;
-  }
+  if (currentQ === 29) { calcResult(); return; }
   currentQ++;
   renderQuestion();
 }
@@ -834,57 +508,50 @@ function prevQ() {
 }
 
 function calcResult() {
-  // 各タイプのスコアを均等に計算
-  const scores = { sun: 0, sage: 0, solver: 0, empath: 0, spark: 0, planner: 0, free: 0, community: 0 };
-
-  // 各質問の答えに対するスコアマッピング
+  const scores = { sun:0, sage:0, solver:0, empath:0, spark:0, planner:0, free:0, community:0 };
   const scoreMap = [
-    // 軸1（Q1-7）: 発信スタイル
-    [{ sun:3 }, { sun:1,empath:1 }, { planner:1 }, { spark:1,free:1 }, { sun:1,planner:1 }, { sun:1,spark:1 }, { sun:1,community:1 }],
-    [{ sun:2 }, { planner:2 }, { free:1,empath:1 }, { empath:2 }, { sage:1,planner:1 }, { spark:2 }, { empath:2 }],
-    // 軸2（Q8-14）: 伝え方
-    [{ sun:2,empath:1 }, { sage:2 }, { solver:2 }, { free:2 }, { sun:1,empath:1 }, { sage:2,planner:1 }, { spark:2 }, { sage:1,solver:1 }],
-    [{ sun:2 }, { sage:2 }, { solver:2 }, { free:1,spark:1 }, { sun:1 }, { solver:1 }, { free:2 }, { empath:2 }],
-    [{ sun:2 }, { sage:2 }, { solver:2 }, { empath:2 }, { sun:1,empath:1 }, { planner:2 }, { community:2 }],
-    [{ sun:2,empath:1 }, { sage:2,planner:1 }, { solver:2 }, { empath:2 }, { sun:1 }, { planner:2 }, { spark:2 }],
-    [{ sun:1,sage:1 }, { sage:2,planner:1 }, { solver:1,planner:1 }, { free:2 }],
-    [{ sun:2,empath:1 }, { sage:2 }, { solver:1,planner:1 }, { free:2,empath:1 }],
-    // 軸3（Q15-21）: 読者への向き合い方
-    [{ empath:2,community:1 }, { sage:2 }, { solver:2 }, { empath:2,community:1 }],
-    [{ empath:2 }, { solver:2,planner:1 }, { community:2 }, { empath:2,community:1 }],
-    [{ empath:3 }, { solver:2 }, { community:2 }, { empath:1,community:1 }],
-    [{ sun:2,empath:1 }, { sage:2 }, { solver:2 }, { empath:2,community:1 }],
-    [{ empath:2,community:1 }, { sage:2,planner:1 }, { solver:2 }, { community:3 }],
-    [{ sun:2,empath:1 }, { sage:2 }, { solver:2 }, { community:2 }],
-    [{ sun:1,empath:1 }, { sage:1,planner:1 }, { solver:2 }, { community:3 }],
-    // 軸4（Q22-30）: コンテンツの方向性
-    [{ spark:3 }, { sage:2,planner:1 }, { planner:2 }, { free:3 }],
-    [{ spark:2,sun:1 }, { sage:2,planner:1 }, { solver:1,planner:1 }, { free:2 }],
-    [{ spark:3 }, { planner:3 }, { planner:2 }, { free:2,empath:1 }],
-    [{ spark:2,sun:1 }, { sage:2,planner:1 }, { solver:2 }, { free:2,empath:1 }],
-    [{ spark:2 }, { sage:2 }, { solver:1,planner:1 }, { free:2 }],
-    [{ spark:1,planner:1 }, { sage:2 }, { planner:2 }, { free:3 }],
-    [{ spark:2 }, { planner:1,sage:1 }, { solver:1 }, { free:2 }],
-    [{ sun:2,empath:1 }, { sage:2,planner:1 }, { solver:1 }, { free:1 }],
-    [{ sun:2,empath:1 }, { sage:2,planner:1 }, { solver:2 }, { free:1,community:1 }],
+    [{ sun:3 },{ sun:1,empath:1 },{ planner:1 },{ spark:1,free:1 },{ sun:1,planner:1 },{ sun:1,spark:1 },{ sun:1,community:1 }],
+    [{ sun:2 },{ planner:2 },{ free:1,empath:1 },{ empath:2 },{ sage:1,planner:1 },{ spark:2 },{ empath:2 }],
+    [{ sun:2,empath:1 },{ sage:2 },{ solver:2 },{ free:2 },{ sun:1,empath:1 },{ sage:2,planner:1 },{ spark:2 },{ sage:1,solver:1 }],
+    [{ sun:2 },{ sage:2 },{ solver:2 },{ free:1,spark:1 },{ sun:1 },{ solver:1 },{ free:2 },{ empath:2 }],
+    [{ sun:2 },{ sage:2 },{ solver:2 },{ empath:2 },{ sun:1,empath:1 },{ planner:2 },{ community:2 }],
+    [{ sun:2,empath:1 },{ sage:2,planner:1 },{ solver:2 },{ empath:2 },{ sun:1 },{ planner:2 },{ spark:2 }],
+    [{ sun:1,sage:1 },{ sage:2,planner:1 },{ solver:1,planner:1 },{ free:2 }],
+    [{ sun:2,empath:1 },{ sage:2 },{ solver:1,planner:1 },{ free:2,empath:1 }],
+    [{ empath:2,community:1 },{ sage:2 },{ solver:2 },{ empath:2,community:1 }],
+    [{ empath:2 },{ solver:2,planner:1 },{ community:2 },{ empath:2,community:1 }],
+    [{ empath:3 },{ solver:2 },{ community:2 },{ empath:1,community:1 }],
+    [{ sun:2,empath:1 },{ sage:2 },{ solver:2 },{ empath:2,community:1 }],
+    [{ empath:2,community:1 },{ sage:2,planner:1 },{ solver:2 },{ community:3 }],
+    [{ sun:2,empath:1 },{ sage:2 },{ solver:2 },{ community:2 }],
+    [{ sun:1,empath:1 },{ sage:1,planner:1 },{ solver:2 },{ community:3 }],
+    [{ spark:3 },{ sage:2,planner:1 },{ planner:2 },{ free:3 }],
+    [{ spark:2,sun:1 },{ sage:2,planner:1 },{ solver:1,planner:1 },{ free:2 }],
+    [{ spark:3 },{ planner:3 },{ planner:2 },{ free:2,empath:1 }],
+    [{ spark:2,sun:1 },{ sage:2,planner:1 },{ solver:2 },{ free:2,empath:1 }],
+    [{ spark:2 },{ sage:2 },{ solver:1,planner:1 },{ free:2 }],
+    [{ spark:1,planner:1 },{ sage:2 },{ planner:2 },{ free:3 }],
+    [{ spark:2 },{ planner:1,sage:1 },{ solver:1 },{ free:2 }],
+    [{ sun:2,empath:1 },{ sage:2,planner:1 },{ solver:1 },{ free:1 }],
+    [{ sun:2,empath:1 },{ sage:2,planner:1 },{ solver:2 },{ free:1,community:1 }],
   ];
-
   answers.forEach((ans, i) => {
     const row = scoreMap[i];
     if (!row || ans === null || !row[ans]) return;
-    const pts = row[ans];
-    Object.entries(pts).forEach(([type, score]) => {
-      if (scores[type] !== undefined) scores[type] += score;
-    });
+    Object.entries(row[ans]).forEach(([type, score]) => { if (scores[type] !== undefined) scores[type] += score; });
   });
-
-  // 最高スコアのタイプを選択（同点の場合はランダム）
   let maxScore = Math.max(...Object.values(scores));
   const topTypes = Object.entries(scores).filter(([,s]) => s === maxScore).map(([t]) => t);
   const maxType = topTypes[Math.floor(Math.random() * topTypes.length)];
 
-  currentPersona = maxType;
-  localStorage.setItem('persona_type', maxType);
+  // ★ 診断対象タブにペルソナを固定保存
+  if (diagnosisTarget === 1) {
+    tab1Persona = maxType;
+    localStorage.setItem('persona_tab1', maxType);
+  } else {
+    tab2Persona = maxType;
+    localStorage.setItem('persona_tab2', maxType);
+  }
   showResult(maxType);
 }
 
@@ -894,33 +561,74 @@ function showResult(type) {
   document.getElementById('resultType').textContent = p.name;
   document.getElementById('resultDesc').textContent = p.desc;
 
-  const traits = document.getElementById('resultTraits');
-  traits.innerHTML = p.traits.map(t => `<span class="trait-tag">${t}</span>`).join('');
+  // ★ どのSHOP用かバッジ
+  const shopBadge = document.getElementById('resultShopBadge');
+  shopBadge.className = 'result-shop-badge tab' + diagnosisTarget;
+  shopBadge.textContent = diagnosisTarget === 1
+    ? '📌 SHOP01（30代ママ）用のキャラクター'
+    : '📌 SHOP02（40代ママ）用のキャラクター';
 
-  document.getElementById('resultPersona').textContent =
-    '【投稿スタイル】\n' + p.tone;
+  document.getElementById('resultTraits').innerHTML = p.traits.map(t => `<span class="trait-tag">${t}</span>`).join('');
+  document.getElementById('resultPersona').textContent = '【投稿スタイル】\n' + p.tone;
 
-  // Update badge
+  // ★ もう一方のSHOP用診断ボタン
+  const otherTab = diagnosisTarget === 1 ? 2 : 1;
+  const otherBtn = document.getElementById('diagOtherShopBtn');
+  otherBtn.className = 'btn-other-shop for-tab' + otherTab;
+  const otherPersona = otherTab === 1 ? tab1Persona : tab2Persona;
+  otherBtn.textContent = otherPersona
+    ? (otherTab === 1 ? '🔄 SHOP01用を再診断する' : '🔄 SHOP02用を再診断する')
+    : (otherTab === 1 ? '➕ SHOP01（30代ママ）用も診断する' : '➕ SHOP02（40代ママ）用も診断する');
+
+  // ヘッダーバッジ
   document.getElementById('badgeIcon').textContent = p.icon;
   document.getElementById('badgeName').textContent = p.name;
   document.getElementById('personaBadge').classList.add('show');
 
-  // Update indicator
-  document.getElementById('piIcon').textContent = p.icon;
-  document.getElementById('piName').textContent = p.name;
-  document.getElementById('piDesc').textContent = p.desc.slice(0, 30) + '...';
-
   showScreen('result');
 }
 
+function goToGen() {
+  updatePersonaIndicator();
+  showScreen('gen');
+}
+
+function diagOtherShop() {
+  const otherTab = diagnosisTarget === 1 ? 2 : 1;
+  startDiagnosis(otherTab);
+}
+
 function resetDiag() {
-  currentQ = 0;
-  answers = new Array(30).fill(null);
-  currentPersona = null;
-  localStorage.removeItem('persona_type');
-  document.getElementById('personaBadge').classList.remove('show');
-  renderQuestion();
-  showScreen('diag');
+  startDiagnosis(diagnosisTarget);
+}
+
+// ★ ペルソナインジケーター：タブごとに表示を切り替え
+function updatePersonaIndicator() {
+  const persona = getActivePersona();
+  const indicator = document.getElementById('personaIndicator');
+  const piIcon = document.getElementById('piIcon');
+  const piName = document.getElementById('piName');
+  const piDesc = document.getElementById('piDesc');
+  const piAction = document.getElementById('piAction');
+
+  if (persona) {
+    const p = PERSONA_TYPES[persona];
+    indicator.className = 'persona-indicator' + (activeTab === 2 ? ' tab2-style' : '');
+    piIcon.textContent = p.icon;
+    piName.textContent = p.name;
+    piDesc.textContent = p.desc.slice(0, 30) + '...';
+    piAction.innerHTML = `<span class="pi-change" onclick="startDiagnosisFromGen()">変更</span>`;
+  } else {
+    indicator.className = 'persona-indicator no-persona';
+    piIcon.textContent = '❓';
+    piName.textContent = '未診断';
+    piDesc.textContent = '先に診断してキャラクターを設定してください';
+    piAction.innerHTML = `<button class="pi-diagnose-btn tab${activeTab}" onclick="startDiagnosisFromGen()">診断する</button>`;
+  }
+}
+
+function startDiagnosisFromGen() {
+  startDiagnosis(activeTab);
 }
 
 // ===== GENERATOR =====
@@ -933,12 +641,10 @@ function toggleDropdown(tabNum) {
   otherDd.classList.remove('open');
   otherArrow.classList.remove('open');
   if (isOpen) {
-    dd.classList.remove('open');
-    arrow.classList.remove('open');
+    dd.classList.remove('open'); arrow.classList.remove('open');
     activateShop(tabNum, tabNum === 1 ? currentTab1Shop : currentTab2Shop);
   } else {
-    dd.classList.add('open');
-    arrow.classList.add('open');
+    dd.classList.add('open'); arrow.classList.add('open');
   }
 }
 
@@ -957,12 +663,15 @@ function selectShop(tabNum, shopId) {
 }
 
 function activateShop(tabNum, shopId) {
+  // ★ アクティブタブを更新してペルソナも切り替え
+  activeTab = tabNum;
   currentShop = shopId;
   const s = SHOPS[shopId];
   document.getElementById('tab1').className = 'shop-tab' + (tabNum === 1 ? ' active-1' : '');
   document.getElementById('tab2').className = 'shop-tab' + (tabNum === 2 ? ' active-2' : '');
   document.getElementById('genBtn').className = 'gen-btn ' + s.color;
   renderShopInfo();
+  updatePersonaIndicator(); // ★ タブ切り替え時にペルソナを再描画
   document.getElementById('daysWrap').innerHTML = `<div class="empty"><span class="empty-icon">✍️</span>上のボタンを押すと<br>7日分の投稿文が自動生成されます</div>`;
 }
 
@@ -986,17 +695,18 @@ function renderShopInfo() {
 
 function randomTime() {
   const hour = 20 + Math.floor(Math.random() * 3);
-  const minuteOptions = [3, 7, 11, 17, 23, 29, 33, 37, 41, 47, 51, 53, 57];
+  const minuteOptions = [3,7,11,17,23,29,33,37,41,47,51,53,57];
   const min = minuteOptions[Math.floor(Math.random() * minuteOptions.length)];
   return `${hour}:${String(min).padStart(2, '0')}`;
 }
 
 function buildPrompt(shop, formulaKey, stepIndex) {
   const s = SHOPS[shop];
-  const p = currentPersona ? PERSONA_TYPES[currentPersona] : PERSONA_TYPES['sun'];
+  // ★ アクティブタブのペルソナを使用（未設定はデフォルト）
+  const personaKey = getActivePersona() || 'sun';
+  const p = PERSONA_TYPES[personaKey];
   const formula = FORMULAS[formulaKey];
   const step = formula.steps[stepIndex];
-
   return `あなたは${s.target}向けのThreadsアカウントの中の人です。
 以下の条件で投稿文を日本語で書いてください。
 
@@ -1028,15 +738,8 @@ async function generatePost(shop, formulaKey, stepIndex) {
   if (!apiKey) throw new Error('APIキーを入力してください');
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + apiKey,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: buildPrompt(shop, formulaKey, stepIndex) }]
-    })
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+    body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 1000, messages: [{ role: 'user', content: buildPrompt(shop, formulaKey, stepIndex) }] })
   });
   const data = await response.json();
   return data.choices?.[0]?.message?.content || 'エラーが発生しました';
@@ -1049,19 +752,12 @@ async function generate() {
   btn.innerHTML = '<div class="spinner"></div> 生成中...';
   wrap.innerHTML = '';
 
-  // フォーミュラーをランダム選択
   const formulaKey = selectFormula();
   const formula = FORMULAS[formulaKey];
   const totalSteps = formula.steps.length;
-
-  // 投稿時間を生成（ステップ数分）
   const times = [];
-  while (times.length < totalSteps) {
-    const t = randomTime();
-    if (!times.includes(t)) times.push(t);
-  }
+  while (times.length < totalSteps) { const t = randomTime(); if (!times.includes(t)) times.push(t); }
 
-  // フォーミュラーバナーを表示
   const banner = document.createElement('div');
   banner.style.cssText = 'margin:0 0 16px;padding:12px 16px;background:linear-gradient(135deg,#fff0ea,#fff5f0);border:1px solid #ffd5c0;border-radius:12px;font-size:0.8rem;font-weight:700;color:var(--accent1);';
   banner.textContent = '✨ 今回のフォーミュラー：' + formula.name + '（' + totalSteps + '投稿シリーズ）';
@@ -1069,9 +765,7 @@ async function generate() {
 
   for (let i = 0; i < totalSteps; i++) {
     const step = formula.steps[i];
-    const time = times[i];
     const day = DAYS_JP[i] || `${i+1}日目`;
-
     const card = document.createElement('div');
     card.className = 'day-card';
     card.style.animationDelay = `${i * 0.05}s`;
@@ -1079,16 +773,15 @@ async function generate() {
       <div class="day-header">
         <div class="day-label">
           <span class="day-num">DAY ${i+1} · ${day}</span>
-          <span class="day-angle angle-気づき" style="background:#f0eaff;color:#8a5fc9">${step.label}</span>
+          <span class="day-angle" style="background:#f0eaff;color:#8a5fc9">${step.label}</span>
         </div>
-        <span class="day-time">📅 ${time}</span>
+        <span class="day-time">📅 ${times[i]}</span>
       </div>
       <div class="day-body" id="body-${i}">生成中...</div>
       <div class="day-footer">
         <button class="copy-btn" id="copy-${i}" onclick="copyPost(${i})" disabled>コピー</button>
       </div>`;
     wrap.appendChild(card);
-
     generatePost(currentShop, formulaKey, i).then(text => {
       document.getElementById(`body-${i}`).textContent = text;
       const copyBtn = document.getElementById(`copy-${i}`);
@@ -1098,7 +791,6 @@ async function generate() {
       document.getElementById(`body-${i}`).textContent = 'エラーが発生しました。もう一度お試しください。';
     });
   }
-
   btn.classList.remove('loading');
   btn.innerHTML = '✨ 投稿シリーズを生成する';
 }
@@ -1109,38 +801,36 @@ function copyPost(i) {
   if (!text || text === '生成中...') return;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = 'コピー済み ✓';
-      btn.classList.add('copied');
+      btn.textContent = 'コピー済み ✓'; btn.classList.add('copied');
       setTimeout(() => { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 2000);
     });
   }
 }
 
-// Service Worker：古いキャッシュを全削除してから登録
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(regs => {
-    regs.forEach(r => r.unregister());
-  });
+  navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
   caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
-  setTimeout(() => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  }, 500);
+  setTimeout(() => navigator.serviceWorker.register('sw.js').catch(() => {}), 500);
 }
 
 // ===== INIT =====
-// APIキーをlocalStorageから読み込む
 const savedKey = localStorage.getItem('openai_api_key');
 if (savedKey) document.getElementById('apiKey').value = savedKey;
-document.getElementById('apiKey').addEventListener('input', function() {
-  localStorage.setItem('openai_api_key', this.value);
-});
+document.getElementById('apiKey').addEventListener('input', function() { localStorage.setItem('openai_api_key', this.value); });
 
-// 毎回必ず診断画面から開始（キャッシュを使わない）
-localStorage.removeItem('persona_type');
-currentPersona = null;
+// ★ localStorageからタブごとのペルソナを復元
+const saved1 = localStorage.getItem('persona_tab1');
+const saved2 = localStorage.getItem('persona_tab2');
+if (saved1) tab1Persona = saved1;
+if (saved2) tab2Persona = saved2;
+
+// 診断画面から開始（SHOP01用）
+diagnosisTarget = 1;
+const initBanner = document.getElementById('diagTargetBanner');
+initBanner.className = 'diag-target-banner tab1';
+initBanner.textContent = '📋 SHOP01（30代ママ）用のキャラクター診断';
 renderQuestion();
 showScreen('diag');
-
 renderShopInfo();
 </script>
 </body>
