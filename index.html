@@ -1674,6 +1674,21 @@ try { renderModeButtons(); } catch(e) { console.error('renderModeButtons:', e); 
 try { updateProductPreview(); } catch(e) { console.error('updateProductPreview:', e); }
 try { initCharSelect(); } catch(e) { console.error('initCharSelect:', e); }
 showScreen('gen');
+
+// ★ 画面表示後に確実にAPIキーを復元
+window.addEventListener('load', function() {
+  var k = localStorage.getItem('openai_api_key');
+  if (k) {
+    var el = document.getElementById('apiKey');
+    if (el) el.value = k;
+  }
+  // ペルソナも復元
+  var p1 = localStorage.getItem('persona_tab1');
+  if (p1) {
+    var sel = document.getElementById('charSelect');
+    if (sel) { sel.value = p1; try { updateCharSelectDesc(p1); } catch(e){} }
+  }
+});;
 </script>
 <script>
 // フォールバック初期化 - メインJSのエラーに関わらず動作
