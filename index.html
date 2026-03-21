@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Threads 投稿ジェネレーター</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="投稿ジェネレーター">
+<meta name="theme-color" content="#e8845a">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1020,7 +1026,7 @@ async function generate() {
     const t = randomTime();
     if (!times.includes(t)) times.push(t);
   }
-  times.sort();
+  // ソートしない → 人間らしくランダムな順番に
 
   for (let i = 0; i < 7; i++) {
     const angle = ANGLES[i];
@@ -1068,6 +1074,11 @@ function copyPost(i) {
       setTimeout(() => { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 2000);
     });
   }
+}
+
+// Service Worker登録
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
 // ===== INIT =====
