@@ -498,7 +498,7 @@
 <div class="header">
   <div>
     <div class="header-logo">Threads ジェネレーター</div>
-    <div class="header-sub">あなたの人格で投稿文を自動生成</div>
+    <div class="header-sub">あなたの人格で投稿文を自動生成 v2.1</div>
   </div>
   <div class="persona-badge" id="personaBadge" onclick="showScreen('result')">
     <span id="badgeIcon">🌟</span>
@@ -834,45 +834,54 @@ function prevQ() {
 }
 
 function calcResult() {
-  // スコア集計（A=外向/感情/共感/直感, B=内向/論理/解決/現実, C=バランス, D=感性）
+  // 各タイプのスコアを均等に計算
   const scores = { sun: 0, sage: 0, solver: 0, empath: 0, spark: 0, planner: 0, free: 0, community: 0 };
 
+  // 各質問の答えに対するスコアマッピング
+  const scoreMap = [
+    // 軸1（Q1-7）: 発信スタイル
+    [{ sun:3 }, { sun:1,empath:1 }, { planner:1 }, { spark:1,free:1 }, { sun:1,planner:1 }, { sun:1,spark:1 }, { sun:1,community:1 }],
+    [{ sun:2 }, { planner:2 }, { free:1,empath:1 }, { empath:2 }, { sage:1,planner:1 }, { spark:2 }, { empath:2 }],
+    // 軸2（Q8-14）: 伝え方
+    [{ sun:2,empath:1 }, { sage:2 }, { solver:2 }, { free:2 }, { sun:1,empath:1 }, { sage:2,planner:1 }, { spark:2 }, { sage:1,solver:1 }],
+    [{ sun:2 }, { sage:2 }, { solver:2 }, { free:1,spark:1 }, { sun:1 }, { solver:1 }, { free:2 }, { empath:2 }],
+    [{ sun:2 }, { sage:2 }, { solver:2 }, { empath:2 }, { sun:1,empath:1 }, { planner:2 }, { community:2 }],
+    [{ sun:2,empath:1 }, { sage:2,planner:1 }, { solver:2 }, { empath:2 }, { sun:1 }, { planner:2 }, { spark:2 }],
+    [{ sun:1,sage:1 }, { sage:2,planner:1 }, { solver:1,planner:1 }, { free:2 }],
+    [{ sun:2,empath:1 }, { sage:2 }, { solver:1,planner:1 }, { free:2,empath:1 }],
+    // 軸3（Q15-21）: 読者への向き合い方
+    [{ empath:2,community:1 }, { sage:2 }, { solver:2 }, { empath:2,community:1 }],
+    [{ empath:2 }, { solver:2,planner:1 }, { community:2 }, { empath:2,community:1 }],
+    [{ empath:3 }, { solver:2 }, { community:2 }, { empath:1,community:1 }],
+    [{ sun:2,empath:1 }, { sage:2 }, { solver:2 }, { empath:2,community:1 }],
+    [{ empath:2,community:1 }, { sage:2,planner:1 }, { solver:2 }, { community:3 }],
+    [{ sun:2,empath:1 }, { sage:2 }, { solver:2 }, { community:2 }],
+    [{ sun:1,empath:1 }, { sage:1,planner:1 }, { solver:2 }, { community:3 }],
+    // 軸4（Q22-30）: コンテンツの方向性
+    [{ spark:3 }, { sage:2,planner:1 }, { planner:2 }, { free:3 }],
+    [{ spark:2,sun:1 }, { sage:2,planner:1 }, { solver:1,planner:1 }, { free:2 }],
+    [{ spark:3 }, { planner:3 }, { planner:2 }, { free:2,empath:1 }],
+    [{ spark:2,sun:1 }, { sage:2,planner:1 }, { solver:2 }, { free:2,empath:1 }],
+    [{ spark:2 }, { sage:2 }, { solver:1,planner:1 }, { free:2 }],
+    [{ spark:1,planner:1 }, { sage:2 }, { planner:2 }, { free:3 }],
+    [{ spark:2 }, { planner:1,sage:1 }, { solver:1 }, { free:2 }],
+    [{ sun:2,empath:1 }, { sage:2,planner:1 }, { solver:1 }, { free:1 }],
+    [{ sun:2,empath:1 }, { sage:2,planner:1 }, { solver:2 }, { free:1,community:1 }],
+  ];
+
   answers.forEach((ans, i) => {
-    if (i < 7) { // 軸1
-      if (ans === 0) scores.sun += 2;
-      if (ans === 1) scores.planner += 1;
-      if (ans === 2) scores.free += 1;
-      if (ans === 3) scores.empath += 1;
-    } else if (i < 14) { // 軸2
-      if (ans === 0) scores.sun += 1;
-      if (ans === 0) scores.empath += 1;
-      if (ans === 1) scores.sage += 2;
-      if (ans === 2) scores.solver += 2;
-      if (ans === 3) scores.free += 1;
-    } else if (i < 21) { // 軸3
-      if (ans === 0) scores.empath += 2;
-      if (ans === 1) scores.solver += 2;
-      if (ans === 2) scores.community += 1;
-      if (ans === 3) scores.empath += 1;
-    } else { // 軸4
-      if (ans === 0) scores.spark += 2;
-      if (ans === 1) scores.planner += 2;
-      if (ans === 2) scores.planner += 1;
-      if (ans === 3) scores.free += 2;
-    }
-
-    // community加算
-    if (ans === 3 && i >= 14 && i < 21) scores.community += 1;
-    if (i === 19 && ans === 3) scores.community += 2;
-    if (i === 20 && ans === 3) scores.community += 2;
+    const row = scoreMap[i];
+    if (!row || ans === null || !row[ans]) return;
+    const pts = row[ans];
+    Object.entries(pts).forEach(([type, score]) => {
+      if (scores[type] !== undefined) scores[type] += score;
+    });
   });
 
-  // 最高スコアのタイプを選択
-  let maxType = 'sun';
-  let maxScore = 0;
-  Object.entries(scores).forEach(([type, score]) => {
-    if (score > maxScore) { maxScore = score; maxType = type; }
-  });
+  // 最高スコアのタイプを選択（同点の場合はランダム）
+  let maxScore = Math.max(...Object.values(scores));
+  const topTypes = Object.entries(scores).filter(([,s]) => s === maxScore).map(([t]) => t);
+  const maxType = topTypes[Math.floor(Math.random() * topTypes.length)];
 
   currentPersona = maxType;
   localStorage.setItem('persona_type', maxType);
@@ -1107,9 +1116,15 @@ function copyPost(i) {
   }
 }
 
-// Service Worker登録
+// Service Worker：古いキャッシュを全削除してから登録
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+  caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+  setTimeout(() => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }, 500);
 }
 
 // ===== INIT =====
