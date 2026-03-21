@@ -459,6 +459,14 @@
     <div class="char-select-row">
       <select class="char-select" id="charSelect" onchange="onCharSelectChange()">
         <option value="">── キャラクターを選択 ──</option>
+        <option value="sun">🌟 太陽ママ型</option>
+        <option value="sage">📚 知識派ママ型</option>
+        <option value="solver">💪 解決師ママ型</option>
+        <option value="empath">🌸 共感妖精型</option>
+        <option value="spark">⚡ 直感型ママ</option>
+        <option value="planner">🎯 戦略家ママ型</option>
+        <option value="free">🌈 自由人ママ型</option>
+        <option value="community">🤝 仲間集めママ型</option>
       </select>
     </div>
     <div class="char-select-desc" id="charSelectDesc"></div>
@@ -888,7 +896,7 @@ function showResult(type) {
     ? '📌 SHOP01（30代ママ）用のキャラクター'
     : '📌 SHOP02（40代ママ）用のキャラクター';
 
-  document.getElementById('resultTraits').innerHTML = p.traits.map(t => `<span class="trait-tag">${t}</span>`).join('');
+  document.getElementById('resultTraits').innerHTML = p.traits.map(function(t){ return '<span class="trait-tag">' + t + '</span>'; }).join('');
   document.getElementById('resultPersona').textContent = '【投稿スタイル】\n' + p.tone;
 
   // ★ もう一方のSHOP用診断ボタン
@@ -1050,7 +1058,7 @@ function showResult(type) {
     ? '📌 SHOP01（30代ママ）用のキャラクター'
     : '📌 SHOP02（40代ママ）用のキャラクター';
 
-  document.getElementById('resultTraits').innerHTML = p.traits.map(t => `<span class="trait-tag">${t}</span>`).join('');
+  document.getElementById('resultTraits').innerHTML = p.traits.map(function(t){ return '<span class="trait-tag">' + t + '</span>'; }).join('');
   document.getElementById('resultPersona').textContent = '【投稿スタイル】\n' + p.tone;
 
   // ★ もう一方のSHOP用診断ボタン
@@ -1104,7 +1112,7 @@ function updatePersonaStatusBanner() {
     banner.style.background = '#eafff5';
     banner.style.border = '1px solid #a0e0b0';
     banner.style.color = '#2a8a4a';
-    banner.innerHTML = `✅ 両SHOP診断済み｜SHOP01: ${p1.icon}${p1.name}　SHOP02: ${p2.icon}${p2.name}`;
+    banner.innerHTML = '✅ 両SHOP診断済み｜SHOP01: ' + p1.icon + p1.name + '　SHOP02: ' + p2.icon + p2.name;
   } else if (p1 || p2) {
     // 片方だけ
     const doneTab = p1 ? 1 : 2;
@@ -1114,7 +1122,7 @@ function updatePersonaStatusBanner() {
     banner.style.background = '#fff8ea';
     banner.style.border = '1px solid #ffd080';
     banner.style.color = '#a06000';
-    banner.innerHTML = `⚠️ SHOP0${doneTab}: ${doneP.icon}${doneP.name}　｜　SHOP0${missingTab}: <span style="cursor:pointer;text-decoration:underline;" onclick="startDiagnosis(${missingTab})">未診断→今すぐ診断</span>`;
+    banner.innerHTML = '⚠️ SHOP0' + doneTab + ': ' + doneP.icon + doneP.name + '　｜　SHOP0' + missingTab + ': <span style="cursor:pointer;text-decoration:underline;" onclick="startDiagnosis(' + missingTab + ')">未診断→今すぐ診断</span>';
   } else {
     banner.style.display = 'none';
   }
@@ -1166,7 +1174,7 @@ function activateShop(tabNum, shopId) {
   updateCharSelectUI();     // ★ プルダウンをタブに応じて更新
   renderModeButtons();      // ★ モードボタンをタブに応じて切替
   updateProductPreview();   // ★ 商品候補プレビューを更新
-  document.getElementById('daysWrap').innerHTML = `<div class="empty"><span class="empty-icon">✍️</span>上のボタンを押すと<br>7日分の投稿文が自動生成されます</div>`;
+  document.getElementById('daysWrap').innerHTML = '<div class="empty"><span class="empty-icon">✍️</span>上のボタンを押すと<br>7日分の投稿文が自動生成されます</div>';
 }
 
 document.addEventListener('click', (e) => {
@@ -1179,19 +1187,19 @@ document.addEventListener('click', (e) => {
 function renderShopInfo() {
   const s = SHOPS[currentShop];
   const bgColor = s.accent + '18';
-  document.getElementById('shopInfo').innerHTML = `
-    <div class="shop-badge" style="background:${bgColor}">${s.icon}</div>
-    <div>
-      <div class="shop-name" style="color:${s.accent}">${s.name}</div>
-      <div class="shop-desc">ターゲット：${s.target}<br>テーマ：${s.theme}</div>
-    </div>`;
+  document.getElementById('shopInfo').innerHTML =
+    '<div class="shop-badge" style="background:' + bgColor + '">' + s.icon + '</div>' +
+    '<div>' +
+      '<div class="shop-name" style="color:' + s.accent + '">' + s.name + '</div>' +
+      '<div class="shop-desc">ターゲット：' + s.target + '<br>テーマ：' + s.theme + '</div>' +
+    '</div>';
 }
 
 function randomTime() {
   const hour = 20 + Math.floor(Math.random() * 3);
   const minuteOptions = [3,7,11,17,23,29,33,37,41,47,51,53,57];
   const min = minuteOptions[Math.floor(Math.random() * minuteOptions.length)];
-  return `${hour}:${String(min).padStart(2, '0')}`;
+  return hour + ':' + String(min).padStart(2, '0');
 }
 
 // 現在の生成で使う商品（generate()開始時に1商品をランダム選択して固定）
@@ -1210,53 +1218,48 @@ function buildPrompt(shop, formulaKey, stepIndex) {
   const formula = FORMULAS[formulaKey];
   const step = formula.steps[stepIndex];
 
-  // ★ ステルスモード：商品情報を投稿タイミングに応じて渡す
   let productSection = '';
   if (step.showProduct && currentProduct) {
-    productSection = `
-【紹介する商品（自然に体験談として溶け込ませること）】
-商品名：${currentProduct.name}
-どんな商品か：${currentProduct.benefit}
-使った後の変化：${currentProduct.change}
-
-【商品の扱い方ルール】
-- 商品名は多くても1〜2回まで。「商品名を使ってみたら〜」という自然な体験談として登場させる
-- 「楽天」「アフィリエイト」「PR」という言葉は絶対に使わない
-- 商品の宣伝・売り込みをしている雰囲気を一切出さない
-- あくまで「友人に話すような自然なシェア」のトーンを維持する${step.softCTA ? '
-- 最後の1〜2行で「気になった人はプロフのリンクを見てみてね」程度の柔らかい誘導を入れる' : '
-- リンク誘導・CTAは入れない'}`;
+    const ctaLine = step.softCTA
+      ? '\n- 最後の1~2行で「気になった人はプロフのリンクを見てみてね」程度の柔らかい誘導を入れる'
+      : '\n- リンク誘導・CTAは入れない';
+    productSection = '\n【紹介する商品（自然に体験談として溶け込ませること）】' +
+      '\n商品名：' + currentProduct.name +
+      '\nどんな商品か：' + currentProduct.benefit +
+      '\n使った後の変化：' + currentProduct.change +
+      '\n\n【商品の扱い方ルール】' +
+      '\n- 商品名は多くても1~2回まで。「商品名を使ってみたら~」という自然な体験談として登場させる' +
+      '\n- 「楽天」「アフィリエイト」「PR」という言葉は絶対に使わない' +
+      '\n- 商品の宣伝・売り込みをしている雰囲気を一切出さない' +
+      '\n- あくまで「友人に話すような自然なシェア」のトーンを維持する' +
+      ctaLine;
   } else {
-    productSection = `
-【重要】この投稿では商品・サービスの紹介は一切しない。
-純粋に共感・気づき・体験談として読者の心に刺さる投稿を書く。`;
+    productSection = '\n【重要】この投稿では商品・サービスの紹介は一切しない。\n純粋に共感・気づき・体験談として読者の心に刺さる投稿を書く。';
   }
 
-  return `あなたは${s.target}向けのThreadsアカウントの中の人です。
-以下の条件で投稿文を日本語で書いてください。
-
-【投稿者の人格・キャラクター】
-タイプ：${p.name}
-特徴：${p.desc}
-文体スタイル：${p.tone}
-
-【今週のシリーズ構成でのこの投稿の役割】
-シリーズ名：${formula.name}
-この投稿のステップ：${step.label}（${stepIndex + 1}投稿目 / 全${formula.steps.length}投稿）
-このステップの目的：${step.desc}
-${productSection}
-
-【投稿条件】
-- ターゲット：${s.target}
-- テーマ：${s.theme}
-- キーワード：${s.keywords.join('、')}
-- 文字数：400〜600文字（必ず400文字以上書くこと）
-- Threadsらしい温かく自然な語り口で
-- 押しつけや強制感のない、友人に話しかけるようなトーンで
-- 改行を効果的に使い読みやすくする
-- ハッシュタグなし
-- 投稿文のみ出力（説明文・ラベル等は不要）`;
+  return 'あなたは' + s.target + '向けのThreadsアカウントの中の人です。\n' +
+    '以下の条件で投稿文を日本語で書いてください。\n\n' +
+    '【投稿者の人格・キャラクター】\n' +
+    'タイプ：' + p.name + '\n' +
+    '特徴：' + p.desc + '\n' +
+    '文体スタイル：' + p.tone + '\n\n' +
+    '【今週のシリーズ構成でのこの投稿の役割】\n' +
+    'シリーズ名：' + formula.name + '\n' +
+    'この投稿のステップ：' + step.label + '（' + (stepIndex + 1) + '投稿目 / 全' + formula.steps.length + '投稿）\n' +
+    'このステップの目的：' + step.desc +
+    productSection + '\n\n' +
+    '【投稿条件】\n' +
+    '- ターゲット：' + s.target + '\n' +
+    '- テーマ：' + s.theme + '\n' +
+    '- キーワード：' + s.keywords.join('、') + '\n' +
+    '- 文字数：400~600文字（必ず400文字以上書くこと）\n' +
+    '- Threadsらしい温かく自然な語り口で\n' +
+    '- 押しつけや強制感のない、友人に話しかけるようなトーンで\n' +
+    '- 改行を効果的に使い読みやすくする\n' +
+    '- ハッシュタグなし\n' +
+    '- 投稿文のみ出力（説明文・ラベル等は不要）';
 }
+
 
 async function generatePost(shop, formulaKey, stepIndex) {
   const apiKey = document.getElementById('apiKey').value.trim();
@@ -1302,30 +1305,30 @@ async function generate() {
 
   for (let i = 0; i < totalSteps; i++) {
     const step = formula.steps[i];
-    const day = DAYS_JP[i] || `${i+1}日目`;
+    const day = DAYS_JP[i] || (i+1) + '日目';
     const card = document.createElement('div');
     card.className = 'day-card';
-    card.style.animationDelay = `${i * 0.05}s`;
-    card.innerHTML = `
-      <div class="day-header">
-        <div class="day-label">
-          <span class="day-num">DAY ${i+1} · ${day}</span>
-          <span class="day-angle" style="background:#f0eaff;color:#8a5fc9">${step.label}</span>
-        </div>
-        <span class="day-time">📅 ${times[i]}</span>
-      </div>
-      <div class="day-body" id="body-${i}">生成中...</div>
-      <div class="day-footer">
-        <button class="copy-btn" id="copy-${i}" onclick="copyPost(${i})" disabled>コピー</button>
-      </div>`;
+    card.style.animationDelay = (i * 0.05) + 's';
+    card.innerHTML =
+      '<div class="day-header">' +
+        '<div class="day-label">' +
+          '<span class="day-num">DAY ' + (i+1) + ' · ' + day + '</span>' +
+          '<span class="day-angle" style="background:#f0eaff;color:#8a5fc9">' + step.label + '</span>' +
+        '</div>' +
+        '<span class="day-time">📅 ' + times[i] + '</span>' +
+      '</div>' +
+      '<div class="day-body" id="body-' + i + '">生成中...</div>' +
+      '<div class="day-footer">' +
+        '<button class="copy-btn" id="copy-' + i + '" onclick="copyPost(' + i + ')" disabled>コピー</button>' +
+      '</div>';
     wrap.appendChild(card);
     generatePost(currentShop, formulaKey, i).then(text => {
-      document.getElementById(`body-${i}`).textContent = text;
-      const copyBtn = document.getElementById(`copy-${i}`);
+      document.getElementById('body-' + i).textContent = text;
+      const copyBtn = document.getElementById('copy-' + i);
       copyBtn.disabled = false;
       copyBtn.dataset.text = text;
     }).catch(() => {
-      document.getElementById(`body-${i}`).textContent = 'エラーが発生しました。もう一度お試しください。';
+      document.getElementById('body-' + i).textContent = 'エラーが発生しました。もう一度お試しください。';
     });
   }
   btn.classList.remove('loading');
@@ -1333,8 +1336,8 @@ async function generate() {
 }
 
 function copyPost(i) {
-  const btn = document.getElementById(`copy-${i}`);
-  const text = btn.dataset.text || document.getElementById(`body-${i}`).textContent;
+  const btn = document.getElementById('copy-' + i);
+  const text = btn.dataset.text || document.getElementById('body-' + i).textContent;
   if (!text || text === '生成中...') return;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
@@ -1359,16 +1362,14 @@ function renderModeButtons() {
   const isTab1 = activeTab === 1;
 
   if (isTab1) {
-    // Shop01: アフィリエイト特化 or 通常モード
-    container.innerHTML = `
-      <button class="mode-btn ${mode === 'affiliate' ? 'active' : ''}" onclick="setMode('affiliate')">🎯 アフィリエイト特化</button>
-      <button class="mode-btn ${mode === 'normal' ? 'active' : ''}" onclick="setMode('normal')">✍️ 通常モード</button>`;
+    container.innerHTML =
+      '<button class="mode-btn ' + (mode === 'affiliate' ? 'active' : '') + '" onclick="setMode('affiliate')">🎯 アフィリエイト特化</button>' +
+      '<button class="mode-btn ' + (mode === 'normal' ? 'active' : '') + '" onclick="setMode('normal')">✍️ 通常モード</button>';
   } else {
-    // Shop02: 立ち上げ7日 / 立ち上げ14日 / アフィリエイト移行
-    container.innerHTML = `
-      <button class="mode-btn ${mode === 'launch7' ? 'active tab2-active' : ''}" onclick="setMode('launch7')">🌱 立ち上げ7日</button>
-      <button class="mode-btn ${mode === 'launch14' ? 'active tab2-active' : ''}" onclick="setMode('launch14')">🌿 立ち上げ14日</button>
-      <button class="mode-btn ${mode === 'affiliate' ? 'active tab2-active' : ''}" onclick="setMode('affiliate')">🎯 アフィリエイト移行</button>`;
+    container.innerHTML =
+      '<button class="mode-btn ' + (mode === 'launch7' ? 'active tab2-active' : '') + '" onclick="setMode('launch7')">🌱 立ち上げ7日</button>' +
+      '<button class="mode-btn ' + (mode === 'launch14' ? 'active tab2-active' : '') + '" onclick="setMode('launch14')">🌿 立ち上げ14日</button>' +
+      '<button class="mode-btn ' + (mode === 'affiliate' ? 'active tab2-active' : '') + '" onclick="setMode('affiliate')">🎯 アフィリエイト移行</button>';
   }
 }
 
@@ -1380,9 +1381,9 @@ function updateProductPreview() {
   // 立ち上げモードの場合
   if (mode === 'launch7' || mode === 'launch14') {
     const days = mode === 'launch7' ? 7 : 14;
-    info.innerHTML = `
-      <div class="mp-title">🌱 立ち上げモード（${days}日間）</div>
-      <div style="margin-top:4px;">Threadsアルゴリズムにジャンルを認識させる専門性投稿を${days}日分生成します。<br>商品紹介・CTAは一切含まれません。まずはフォロワーとの信頼を積む期間です。</div>`;
+    info.innerHTML =
+      '<div class="mp-title">🌱 立ち上げモード（' + days + '日間）</div>' +
+      '<div style="margin-top:4px;">Threadsアルゴリズムにジャンルを認識させる専門性投稿を' + days + '日分生成します。<br>商品紹介・CTAは一切含まれません。まずはフォロワーとの信頼を積む期間です。</div>';
     info.className = 'mode-product show launch';
     return;
   }
@@ -1400,14 +1401,16 @@ function updateProductPreview() {
     return;
   }
   const products = s.products;
-  const html = products.map((p, i) =>
-    `<div style="margin-bottom:${i < products.length-1 ? '8px' : '0'};${i > 0 ? 'padding-top:8px;border-top:1px solid var(--border)' : ''}">
-      <div class="mp-badge">候補${i+1}</div>
-      <div class="mp-title">📦 ${p.name}</div>
-      <div>${p.benefit}</div>
-    </div>`
-  ).join('');
-  info.innerHTML = `<div style="margin-bottom:8px;font-size:0.7rem;font-family:'DM Mono',monospace;color:var(--muted)">🎯 このSHOPで紹介候補の商品（生成時に1つ自動選択）</div>${html}`;
+  const html = products.map(function(p, i) {
+    const mb = i < products.length-1 ? '8px' : '0';
+    const pt = i > 0 ? 'padding-top:8px;border-top:1px solid var(--border)' : '';
+    return '<div style="margin-bottom:' + mb + ';' + pt + '">' +
+      '<div class="mp-badge">候補' + (i+1) + '</div>' +
+      '<div class="mp-title">📦 ' + p.name + '</div>' +
+      '<div>' + p.benefit + '</div>' +
+    '</div>';
+  }).join('');
+  info.innerHTML = '<div style="margin-bottom:8px;font-size:0.7rem;font-family:'DM Mono',monospace;color:var(--muted)">🎯 このSHOPで紹介候補の商品（生成時に1つ自動選択）</div>' + html;
   info.className = 'mode-product show';
 }
 
@@ -1439,7 +1442,7 @@ function pickProduct(shopId) {
 function initProdShopSelect() {
   const sel = document.getElementById('prodShopSelect');
   sel.innerHTML = Object.entries(SHOPS).map(([id, s]) =>
-    `<option value="${id}">${s.icon} ${s.name}</option>`
+    '<option value="' + id + '">' + s.icon + ' ' + s.name + '</option>'
   ).join('');
   renderProductList();
 }
@@ -1454,29 +1457,31 @@ function renderProductList() {
 
   // SHOPタイトルと件数
   if (products.length === 0) {
-    list.innerHTML = `<div class="empty" style="padding:20px"><span class="empty-icon">📦</span>商品がまだありません<br>下の「＋ 商品を追加する」から追加してください</div>`;
+    list.innerHTML = '<div class="empty" style="padding:20px"><span class="empty-icon">📦</span>商品がまだありません<br>下の「＋ 商品を追加する」から追加してください</div>';
     return;
   }
 
-  list.innerHTML = products.map((p, i) => `
-    <div class="prod-card">
-      <div class="prod-card-header">
-        <div>
-          ${isCustom ? '<span class="prod-card-badge">カスタム</span>' : '<span class="prod-card-badge" style="background:#eaf4ff;color:#3a7ec9;">デフォルト</span>'}
-          <div class="prod-card-name">📦 ${escHtml(p.name)}</div>
-        </div>
-        <div class="prod-card-actions">
-          <button class="prod-edit-btn" onclick="openProductModal(${i})">編集</button>
-          <button class="prod-del-btn" onclick="deleteProduct(${i})">削除</button>
-        </div>
-      </div>
-      <div class="prod-card-detail">
-        <span><strong>メリット：</strong>${escHtml(p.benefit)}</span>
-        <span><strong>変化：</strong>${escHtml(p.change)}</span>
-        ${p.price ? `<span><strong>価格帯：</strong>${escHtml(p.price)}</span>` : ''}
-        ${p.rate ? `<span><strong>報酬メモ：</strong>${escHtml(p.rate)}</span>` : ''}
-      </div>
-    </div>`).join('');
+  list.innerHTML = products.map(function(p, i) {
+    const badge = isCustom
+      ? '<span class="prod-card-badge">カスタム</span>'
+      : '<span class="prod-card-badge" style="background:#eaf4ff;color:#3a7ec9;">デフォルト</span>';
+    const priceHtml = p.price ? '<span><strong>価格帯：</strong>' + escHtml(p.price) + '</span>' : '';
+    const rateHtml = p.rate ? '<span><strong>報酬メモ：</strong>' + escHtml(p.rate) + '</span>' : '';
+    return '<div class="prod-card">' +
+      '<div class="prod-card-header">' +
+        '<div>' + badge + '<div class="prod-card-name">📦 ' + escHtml(p.name) + '</div></div>' +
+        '<div class="prod-card-actions">' +
+          '<button class="prod-edit-btn" onclick="openProductModal(' + i + ')">編集</button>' +
+          '<button class="prod-del-btn" onclick="deleteProduct(' + i + ')">削除</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="prod-card-detail">' +
+        '<span><strong>メリット：</strong>' + escHtml(p.benefit) + '</span>' +
+        '<span><strong>変化：</strong>' + escHtml(p.change) + '</span>' +
+        priceHtml + rateHtml +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
 function escHtml(str) {
@@ -1569,16 +1574,8 @@ document.addEventListener('click', (e) => {
 
 // プルダウンを初期化
 function initCharSelect() {
-  const sel = document.getElementById('charSelect');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">── キャラクターを選択 ──</option>';
-  Object.entries(PERSONA_TYPES).forEach(([key, p]) => {
-    const opt = document.createElement('option');
-    opt.value = key;
-    opt.textContent = p.icon + ' ' + p.name;
-    sel.appendChild(opt);
-  });
-  // 現在のタブのペルソナを反映
+  // optionはHTML直書き済み
+  // localStorageから保存済みペルソナを反映
   updateCharSelectUI();
 }
 
