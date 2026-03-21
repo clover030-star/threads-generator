@@ -880,6 +880,15 @@ function copyPost(i) {
   }
 }
 
+// APIキーをlocalStorageから読み込む
+const savedKey = localStorage.getItem('openai_api_key');
+if (savedKey) document.getElementById('apiKey').value = savedKey;
+
+// APIキーをlocalStorageに保存
+document.getElementById('apiKey').addEventListener('input', function() {
+  localStorage.setItem('openai_api_key', this.value);
+});
+
 // 初期表示
 renderShopInfo();
 </script>
