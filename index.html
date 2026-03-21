@@ -1363,13 +1363,13 @@ function renderModeButtons() {
 
   if (isTab1) {
     container.innerHTML =
-      '<button class="mode-btn ' + (mode === 'affiliate' ? 'active' : '') + '" onclick="setMode('affiliate')">🎯 アフィリエイト特化</button>' +
-      '<button class="mode-btn ' + (mode === 'normal' ? 'active' : '') + '" onclick="setMode('normal')">✍️ 通常モード</button>';
+      '<button class="mode-btn ' + (mode === 'affiliate' ? 'active' : '') + '" onclick="setMode(&apos;affiliate&apos;)">🎯 アフィリエイト特化</button>' +
+      '<button class="mode-btn ' + (mode === 'normal' ? 'active' : '') + '" onclick="setMode(&apos;normal&apos;)">✍️ 通常モード</button>';
   } else {
     container.innerHTML =
-      '<button class="mode-btn ' + (mode === 'launch7' ? 'active tab2-active' : '') + '" onclick="setMode('launch7')">🌱 立ち上げ7日</button>' +
-      '<button class="mode-btn ' + (mode === 'launch14' ? 'active tab2-active' : '') + '" onclick="setMode('launch14')">🌿 立ち上げ14日</button>' +
-      '<button class="mode-btn ' + (mode === 'affiliate' ? 'active tab2-active' : '') + '" onclick="setMode('affiliate')">🎯 アフィリエイト移行</button>';
+      '<button class="mode-btn ' + (mode === 'launch7' ? 'active tab2-active' : '') + '" onclick="setMode(&apos;launch7&apos;)">🌱 立ち上げ7日</button>' +
+      '<button class="mode-btn ' + (mode === 'launch14' ? 'active tab2-active' : '') + '" onclick="setMode(&apos;launch14&apos;)">🌿 立ち上げ14日</button>' +
+      '<button class="mode-btn ' + (mode === 'affiliate' ? 'active tab2-active' : '') + '" onclick="setMode(&apos;affiliate&apos;)">🎯 アフィリエイト移行</button>';
   }
 }
 
@@ -1656,6 +1656,28 @@ renderModeButtons();
 updateProductPreview();
 initCharSelect();
 showScreen('gen');
+</script>
+<script>
+// フォールバック初期化 - メインJSのエラーに関わらず動作
+try {
+  // APIキー復元
+  var k = localStorage.getItem('openai_api_key');
+  if(k) { var el = document.getElementById('apiKey'); if(el) el.value = k; }
+  
+  // ペルソナ復元
+  var p1 = localStorage.getItem('persona_tab1');
+  var p2 = localStorage.getItem('persona_tab2');
+  if(p1) { var s1 = document.getElementById('charSelect'); if(s1) s1.value = p1; }
+  
+  // 画面表示確認
+  var gen = document.getElementById('screen-gen');
+  if(gen && !gen.classList.contains('active')) {
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    gen.classList.add('active');
+  }
+} catch(e) {
+  console.error('Fallback init error:', e);
+}
 </script>
 </body>
 </html>
