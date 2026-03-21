@@ -909,7 +909,169 @@ function showResult(type) {
 }
 
 function goToGen() {
-  updatePersonaIndicator();
+  updateCharSelectUI();
+  renderModeButtons();
+  updateProductPreview();
+  showScreen('gen');
+}
+
+function diagOtherShop() {
+  const otherTab = diagnosisTarget === 1 ? 2 : 1;
+  startDiagnosis(otherTab);
+}
+
+function resetDiag() {
+  startDiagnosis(diagnosisTarget);
+}
+
+// ペルソナインジケーター（旧）は空実装に（プルダウンに統合）
+function updatePersonaIndicator() {
+  updatePersonaStatusBanner();
+}
+
+// ===== SCREENS =====
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'products') initProdShopSelect();
+}
+
+// ★ タブを指定して診断を開始
+function startDiagnosis(tabNum) {
+  diagnosisTarget = tabNum;
+  currentQ = 0;
+  answers = new Array(30).fill(null);
+  const banner = document.getElementById('diagTargetBanner');
+  banner.className = 'diag-target-banner tab' + tabNum;
+  banner.textContent = tabNum === 1
+    ? '📋 SHOP01（30代ママ）用のキャラクター診断'
+    : '📋 SHOP02（40代ママ）用のキャラクター診断';
+  renderQuestion();
+  showScreen('diag');
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  document.getElementById('qNum').textContent = currentQ + 1;
+  document.getElementById('qPct').textContent = Math.round((currentQ / 30) * 100) + '%';
+  document.getElementById('progressFill').style.width = (currentQ / 30 * 100) + '%';
+  document.getElementById('qAxis').textContent = q.axis;
+  document.getElementById('qText').textContent = q.q;
+  const opts = document.getElementById('qOptions');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-option' + (answers[currentQ] === i ? ' selected' : '');
+    btn.textContent = ['A', 'B', 'C', 'D'][i] + '：' + opt;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('prevBtn').disabled = currentQ === 0;
+  document.getElementById('nextBtn').disabled = answers[currentQ] === null;
+  document.getElementById('nextBtn').textContent = currentQ === 29 ? '診断する ✨' : '次へ →';
+}
+
+function selectAnswer(i) {
+  answers[currentQ] = i;
+  document.querySelectorAll('.q-option').forEach((btn, idx) => btn.classList.toggle('selected', idx === i));
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function nextQ() {
+  if (answers[currentQ] === null) return;
+  if (currentQ === 29) { calcResult(); return; }
+  currentQ++;
+  renderQuestion();
+}
+
+function prevQ() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); }
+}
+
+function calcResult() {
+  const scores = { sun:0, sage:0, solver:0, empath:0, spark:0, planner:0, free:0, community:0 };
+  const scoreMap = [
+    [{ sun:3 },{ sun:1,empath:1 },{ planner:1 },{ spark:1,free:1 },{ sun:1,planner:1 },{ sun:1,spark:1 },{ sun:1,community:1 }],
+    [{ sun:2 },{ planner:2 },{ free:1,empath:1 },{ empath:2 },{ sage:1,planner:1 },{ spark:2 },{ empath:2 }],
+    [{ sun:2,empath:1 },{ sage:2 },{ solver:2 },{ free:2 },{ sun:1,empath:1 },{ sage:2,planner:1 },{ spark:2 },{ sage:1,solver:1 }],
+    [{ sun:2 },{ sage:2 },{ solver:2 },{ free:1,spark:1 },{ sun:1 },{ solver:1 },{ free:2 },{ empath:2 }],
+    [{ sun:2 },{ sage:2 },{ solver:2 },{ empath:2 },{ sun:1,empath:1 },{ planner:2 },{ community:2 }],
+    [{ sun:2,empath:1 },{ sage:2,planner:1 },{ solver:2 },{ empath:2 },{ sun:1 },{ planner:2 },{ spark:2 }],
+    [{ sun:1,sage:1 },{ sage:2,planner:1 },{ solver:1,planner:1 },{ free:2 }],
+    [{ sun:2,empath:1 },{ sage:2 },{ solver:1,planner:1 },{ free:2,empath:1 }],
+    [{ empath:2,community:1 },{ sage:2 },{ solver:2 },{ empath:2,community:1 }],
+    [{ empath:2 },{ solver:2,planner:1 },{ community:2 },{ empath:2,community:1 }],
+    [{ empath:3 },{ solver:2 },{ community:2 },{ empath:1,community:1 }],
+    [{ sun:2,empath:1 },{ sage:2 },{ solver:2 },{ empath:2,community:1 }],
+    [{ empath:2,community:1 },{ sage:2,planner:1 },{ solver:2 },{ community:3 }],
+    [{ sun:2,empath:1 },{ sage:2 },{ solver:2 },{ community:2 }],
+    [{ sun:1,empath:1 },{ sage:1,planner:1 },{ solver:2 },{ community:3 }],
+    [{ spark:3 },{ sage:2,planner:1 },{ planner:2 },{ free:3 }],
+    [{ spark:2,sun:1 },{ sage:2,planner:1 },{ solver:1,planner:1 },{ free:2 }],
+    [{ spark:3 },{ planner:3 },{ planner:2 },{ free:2,empath:1 }],
+    [{ spark:2,sun:1 },{ sage:2,planner:1 },{ solver:2 },{ free:2,empath:1 }],
+    [{ spark:2 },{ sage:2 },{ solver:1,planner:1 },{ free:2 }],
+    [{ spark:1,planner:1 },{ sage:2 },{ planner:2 },{ free:3 }],
+    [{ spark:2 },{ planner:1,sage:1 },{ solver:1 },{ free:2 }],
+    [{ sun:2,empath:1 },{ sage:2,planner:1 },{ solver:1 },{ free:1 }],
+    [{ sun:2,empath:1 },{ sage:2,planner:1 },{ solver:2 },{ free:1,community:1 }],
+  ];
+  answers.forEach((ans, i) => {
+    const row = scoreMap[i];
+    if (!row || ans === null || !row[ans]) return;
+    Object.entries(row[ans]).forEach(([type, score]) => { if (scores[type] !== undefined) scores[type] += score; });
+  });
+  let maxScore = Math.max(...Object.values(scores));
+  const topTypes = Object.entries(scores).filter(([,s]) => s === maxScore).map(([t]) => t);
+  const maxType = topTypes[Math.floor(Math.random() * topTypes.length)];
+
+  // ★ 診断対象タブにペルソナを固定保存
+  if (diagnosisTarget === 1) {
+    tab1Persona = maxType;
+    localStorage.setItem('persona_tab1', maxType);
+  } else {
+    tab2Persona = maxType;
+    localStorage.setItem('persona_tab2', maxType);
+  }
+  showResult(maxType);
+}
+
+function showResult(type) {
+  const p = PERSONA_TYPES[type];
+  document.getElementById('resultIcon').textContent = p.icon;
+  document.getElementById('resultType').textContent = p.name;
+  document.getElementById('resultDesc').textContent = p.desc;
+
+  // ★ どのSHOP用かバッジ
+  const shopBadge = document.getElementById('resultShopBadge');
+  shopBadge.className = 'result-shop-badge tab' + diagnosisTarget;
+  shopBadge.textContent = diagnosisTarget === 1
+    ? '📌 SHOP01（30代ママ）用のキャラクター'
+    : '📌 SHOP02（40代ママ）用のキャラクター';
+
+  document.getElementById('resultTraits').innerHTML = p.traits.map(t => `<span class="trait-tag">${t}</span>`).join('');
+  document.getElementById('resultPersona').textContent = '【投稿スタイル】\n' + p.tone;
+
+  // ★ もう一方のSHOP用診断ボタン
+  const otherTab = diagnosisTarget === 1 ? 2 : 1;
+  const otherBtn = document.getElementById('diagOtherShopBtn');
+  otherBtn.className = 'btn-other-shop for-tab' + otherTab;
+  const otherPersona = otherTab === 1 ? tab1Persona : tab2Persona;
+  otherBtn.textContent = otherPersona
+    ? (otherTab === 1 ? '🔄 SHOP01用を再診断する' : '🔄 SHOP02用を再診断する')
+    : (otherTab === 1 ? '➕ SHOP01（30代ママ）用も診断する' : '➕ SHOP02（40代ママ）用も診断する');
+
+  // ヘッダーバッジ
+  document.getElementById('badgeIcon').textContent = p.icon;
+  document.getElementById('badgeName').textContent = p.name;
+  document.getElementById('personaBadge').classList.add('show');
+
+  showScreen('result');
+}
+
+function goToGen() {
+  updateCharSelectUI();
   renderModeButtons();
   updateProductPreview();
   showScreen('gen');
@@ -926,29 +1088,7 @@ function resetDiag() {
 
 // ★ ペルソナインジケーター：タブごとに表示を切り替え
 function updatePersonaIndicator() {
-  const persona = getActivePersona();
-  const indicator = document.getElementById('personaIndicator');
-  const piIcon = document.getElementById('piIcon');
-  const piName = document.getElementById('piName');
-  const piDesc = document.getElementById('piDesc');
-  const piAction = document.getElementById('piAction');
-
-  if (persona) {
-    const p = PERSONA_TYPES[persona];
-    indicator.className = 'persona-indicator' + (activeTab === 2 ? ' tab2-style' : '');
-    piIcon.textContent = p.icon;
-    piName.textContent = p.name;
-    piDesc.textContent = p.desc.slice(0, 30) + '...';
-    piAction.innerHTML = `<span class="pi-change" onclick="startDiagnosisFromGen()">再診断</span>`;
-  } else {
-    indicator.className = 'persona-indicator no-persona';
-    piIcon.textContent = '❓';
-    piName.textContent = '未診断';
-    piDesc.textContent = '先に診断してキャラクターを設定してください';
-    piAction.innerHTML = `<button class="pi-diagnose-btn tab${activeTab}" onclick="startDiagnosisFromGen()">診断する</button>`;
-  }
-
-  // ★ 両タブの診断状況バナーを更新
+  // プルダウンUIに統合済み - バナーのみ更新
   updatePersonaStatusBanner();
 }
 
@@ -980,9 +1120,7 @@ function updatePersonaStatusBanner() {
   }
 }
 
-function startDiagnosisFromGen() {
-  startDiagnosis(activeTab);
-}
+function startDiagnosisFromGen() { /* 廃止 */ }
 
 // ===== GENERATOR =====
 function toggleDropdown(tabNum) {
@@ -1469,11 +1607,12 @@ function updateCharSelectDesc(personaKey) {
   const p = PERSONA_TYPES[personaKey];
   const isTab2 = activeTab === 2;
   const tagClass = isTab2 ? 'char-desc-tag tab2' : 'char-desc-tag';
-  desc.innerHTML = \`
-    <div class="char-desc-name" style="color:\${isTab2 ? 'var(--shop2)' : 'var(--accent1)'}">\${p.icon} \${p.name}</div>
-    <div style="color:var(--muted);font-size:0.76rem;margin-bottom:6px;">\${p.desc}</div>
-    <div class="char-desc-tags">\${p.traits.map(t => \`<span class="\${tagClass}">\${t}</span>\`).join('')}</div>
-  \`;
+  const color = isTab2 ? 'var(--shop2)' : 'var(--accent1)';
+  const tagsHtml = p.traits.map(function(t){ return '<span class="' + tagClass + '">' + t + '</span>'; }).join('');
+  desc.innerHTML =
+    '<div class="char-desc-name" style="color:' + color + '">' + p.icon + ' ' + p.name + '</div>' +
+    '<div style="color:var(--muted);font-size:0.76rem;margin-bottom:6px;">' + p.desc + '</div>' +
+    '<div class="char-desc-tags">' + tagsHtml + '</div>';
 }
 
 // プルダウン変更時
