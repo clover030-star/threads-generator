@@ -413,7 +413,7 @@
 </div>
 
 <!-- 生成画面 -->
-<div class="screen" id="screen-gen">
+<div class="screen active" id="screen-gen">
   <!-- ★ ペルソナ診断状況バナー -->
   <div id="personaStatusBanner" style="margin:16px 20px 0;padding:10px 16px;border-radius:12px;font-size:0.78rem;font-weight:700;display:none;"></div>
 
@@ -1480,7 +1480,7 @@ function renderProductList() {
 }
 
 function escHtml(str) {
-  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return (str || '').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"');
 }
 
 // モーダルを開く（indexがnullなら新規追加、数値なら編集）
