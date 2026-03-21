@@ -102,6 +102,11 @@
   .prod-card-actions { display: flex; gap: 6px; margin-top: 8px; }
   .prod-edit-btn, .prod-del-btn { padding: 4px 12px; border-radius: 8px; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.72rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border); }
   .prod-del-btn { background: #fff0f0; color: #c94040; border-color: #ffc0c0; }
+  .prod-select-btn { padding: 4px 12px; border-radius: 8px; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.72rem; font-weight: 700; cursor: pointer; border: 1px solid #b0d8b0; background: #f0fff0; color: #2a7a2a; }
+  .prod-select-btn.selected { background: #2a7a2a; color: #fff; border-color: #2a7a2a; pointer-events: none; }
+  .prod-card.selected-card { border: 2px solid #2a7a2a; background: #f5fff5; }
+  .prod-selected-badge { display: inline-block; background: #2a7a2a; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 6px; margin-left: 6px; vertical-align: middle; }
+  .current-product-bar { margin: 8px 0 2px; padding: 7px 12px; background: #f0fff0; border: 1px solid #b0d8b0; border-radius: 10px; font-size: 0.75rem; color: #2a7a2a; font-weight: 700; }
   .prod-add-btn { width: 100%; padding: 12px; border: 2px dashed var(--border); border-radius: 12px; background: var(--bg); color: var(--muted); font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
   .prod-reset-btn { width: 100%; padding: 10px; border: 1px solid #ffc0c0; border-radius: 10px; background: #fff0f0; color: #c94040; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
   .prod-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
@@ -201,6 +206,9 @@
     <input class="api-input" type="text" id="apiKey" placeholder="sk-..." autocomplete="off">
     <div style="font-size:0.68rem;color:var(--muted);margin-top:5px;font-family:DM Mono,monospace;">※ platform.openai.com でAPIキーを取得してください</div>
   </div>
+
+  <!-- 選択中商品バー -->
+  <div id="currentProdBar" class="current-product-bar" style="display:none;margin:0 20px 12px;"></div>
 
   <!-- 生成ボタン -->
   <div class="gen-wrap">
@@ -372,6 +380,9 @@ var tab2Persona = "";
 var tab1Mode = "affiliate";
 var tab2Mode = "launch7";
 var currentProduct = null;
+// SHOPごとの選択商品インデックス（-1=ランダム）
+var tab1SelProd = -1;
+var tab2SelProd = -1;
 
 // ============================================================
 // 初期化
@@ -384,6 +395,8 @@ window.onload = function() {
   // ペルソナ復元
   tab1Persona = localStorage.getItem("persona_tab1") || "";
   tab2Persona = localStorage.getItem("persona_tab2") || "";
+  tab1SelProd = parseInt(localStorage.getItem("sel_prod_tab1") || "-1");
+  tab2SelProd = parseInt(localStorage.getItem("sel_prod_tab2") || "-1");
   
   // モード復元
   tab1Mode = localStorage.getItem("mode_tab1") || "affiliate";
@@ -401,6 +414,7 @@ window.onload = function() {
   renderModeButtons();
   renderCharSelect();
   updateStatusBanner();
+  updateCurrentProdBar();
 };
 
 // ============================================================
@@ -460,6 +474,7 @@ function activateShop(tabNum, shopId) {
   renderModeButtons();
   renderCharSelect();
   updateStatusBanner();
+  updateCurrentProdBar();
   document.getElementById("daysWrap").innerHTML = "<div class=\"empty\">✍️<br>上のボタンを押すと<br>7日分の投稿文が自動生成されます</div>";
 }
 
@@ -550,6 +565,7 @@ function renderModeButtons() {
   } else {
     info.className = "mode-info";
   }
+  updateCurrentProdBar();
 }
 
 // ============================================================
@@ -589,7 +605,10 @@ function saveProducts(shopId, prods) {
 }
 function pickProduct(shopId) {
   var prods = getProducts(shopId);
-  return prods.length ? prods[Math.floor(Math.random() * prods.length)] : null;
+  if (!prods.length) return null;
+  var selIdx = activeTab === 1 ? tab1SelProd : tab2SelProd;
+  if (selIdx >= 0 && prods[selIdx]) return prods[selIdx];
+  return prods[Math.floor(Math.random() * prods.length)];
 }
 
 // ============================================================
@@ -668,6 +687,8 @@ async function generate() {
   bannerEl.textContent = "✨ " + formula.name + "（" + formula.steps.length + "投稿シリーズ）" + (currentProduct ? "　📦 " + currentProduct.name : "");
   wrap.appendChild(bannerEl);
   
+  // カードを先に全部作る
+  var cards = [];
   for (var i = 0; i < formula.steps.length; i++) {
     var step = formula.steps[i];
     var day = DAYS_JP[i] || (i + 1) + "日目";
@@ -680,31 +701,39 @@ async function generate() {
         "<span class=\"day-label\">DAY " + (i+1) + " · " + day + "</span>" +
         "<span class=\"day-step\">" + step.label + "</span>" +
       "</div>" +
-      "<div class=\"day-body\" id=\"" + bodyId + "\">生成中...</div>" +
+      "<div class=\"day-body\" id=\"" + bodyId + "\"><span style=\"color:#bbb\">⏳ 待機中...</span></div>" +
       "<div class=\"day-footer\"><button class=\"copy-btn\" id=\"" + copyId + "\" onclick=\"copyPost('" + bodyId + "','" + copyId + "')\" disabled>コピー</button></div>";
     wrap.appendChild(card);
-    
-    (function(step, bodyId, copyId) {
-      var prompt = buildPrompt(step, formula);
-      fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
-        body: JSON.stringify({ model: "gpt-4o-mini", max_tokens: 1000, messages: [{ role: "user", content: prompt }] })
-      }).then(function(r) { return r.json(); })
-        .then(function(data) {
-          var text = data.choices && data.choices[0] ? data.choices[0].message.content : "エラーが発生しました";
-          document.getElementById(bodyId).textContent = text;
-          var cb = document.getElementById(copyId);
-          cb.disabled = false;
-          cb.dataset.text = text;
-        }).catch(function() {
-          document.getElementById(bodyId).textContent = "エラーが発生しました。もう一度お試しください。";
-        });
-    })(step, bodyId, copyId);
+    cards.push({ step: step, bodyId: bodyId, copyId: copyId });
   }
-  
-  btn.classList.remove("loading");
-  btn.innerHTML = "✨ 投稿シリーズを生成する";
+
+  // 1件ずつ順番に生成
+  (async function() {
+    for (var j = 0; j < cards.length; j++) {
+      var c = cards[j];
+      var total = cards.length;
+      btn.innerHTML = "<div class=\"spinner\"></div> 生成中 " + (j+1) + " / " + total + "...";
+      document.getElementById(c.bodyId).innerHTML = "<span style=\"color:#e8845a\">✍️ 生成中...</span>";
+      try {
+        var prompt = buildPrompt(c.step, formula);
+        var r = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
+          body: JSON.stringify({ model: "gpt-4o-mini", max_tokens: 700, messages: [{ role: "user", content: prompt }] })
+        });
+        var data = await r.json();
+        var text = (data.choices && data.choices[0]) ? data.choices[0].message.content : ("エラー: " + (data.error ? data.error.message : "不明"));
+        document.getElementById(c.bodyId).textContent = text;
+        var cb = document.getElementById(c.copyId);
+        cb.disabled = false;
+        cb.dataset.text = text;
+      } catch(e) {
+        document.getElementById(c.bodyId).textContent = "エラーが発生しました。もう一度お試しください。";
+      }
+    }
+    btn.classList.remove("loading");
+    btn.innerHTML = "✨ 投稿シリーズを生成する";
+  })();
 }
 
 function copyPost(bodyId, copyId) {
@@ -742,19 +771,62 @@ function renderProdList() {
   var shopId = parseInt(document.getElementById("prodShopSel").value);
   var prods = getProducts(shopId);
   var list = document.getElementById("prodList");
+  // このshopIdに対応するタブの選択インデックス
+  var selIdx = getSelProdIdx(shopId);
   if (!prods.length) {
     list.innerHTML = "<div class=\"empty\" style=\"padding:20px\">📦<br>商品がまだありません</div>";
     return;
   }
   list.innerHTML = prods.map(function(p, i) {
-    return "<div class=\"prod-card\">" +
-      "<div class=\"prod-card-name\">📦 " + p.name + "</div>" +
+    var isSelected = (selIdx === i);
+    return "<div class=\"prod-card" + (isSelected ? " selected-card" : "") + "\">" +
+      "<div class=\"prod-card-name\">📦 " + p.name + (isSelected ? "<span class=\"prod-selected-badge\">✓ 使用中</span>" : "") + "</div>" +
       "<div class=\"prod-card-detail\">メリット：" + p.benefit + "<br>変化：" + p.change + (p.price ? "<br>価格帯：" + p.price : "") + "</div>" +
       "<div class=\"prod-card-actions\">" +
+        "<button class=\"prod-select-btn" + (isSelected ? " selected" : "") + "\" onclick=\"selectProd(" + i + ")\">" + (isSelected ? "✓ 選択中" : "この商品を使う") + "</button>" +
         "<button class=\"prod-edit-btn\" onclick=\"openProdModal(" + i + ")\">編集</button>" +
         "<button class=\"prod-del-btn\" onclick=\"deleteProd(" + i + ")\">削除</button>" +
       "</div></div>";
   }).join("");
+}
+
+// SHOPのタブに対応する選択インデックスを取得
+function getSelProdIdx(shopId) {
+  // tab1Shop/tab2Shopからどちらのタブか判定
+  if (shopId == tab1Shop) return tab1SelProd;
+  if (shopId == tab2Shop) return tab2SelProd;
+  return -1;
+}
+
+// 商品を選択する
+function selectProd(idx) {
+  var shopId = parseInt(document.getElementById("prodShopSel").value);
+  if (shopId == tab1Shop) {
+    tab1SelProd = idx;
+    localStorage.setItem("sel_prod_tab1", idx);
+  } else if (shopId == tab2Shop) {
+    tab2SelProd = idx;
+    localStorage.setItem("sel_prod_tab2", idx);
+  }
+  renderProdList();
+  updateCurrentProdBar();
+}
+
+// 生成画面の「選択中商品バー」を更新
+function updateCurrentProdBar() {
+  var bar = document.getElementById("currentProdBar");
+  if (!bar) return;
+  var mode = getMode();
+  if (mode !== "affiliate") { bar.style.display = "none"; return; }
+  var selIdx = activeTab === 1 ? tab1SelProd : tab2SelProd;
+  var prods = getProducts(currentShop);
+  if (!prods.length) { bar.style.display = "none"; return; }
+  bar.style.display = "block";
+  if (selIdx >= 0 && prods[selIdx]) {
+    bar.innerHTML = "📦 使用商品：<strong>" + prods[selIdx].name + "</strong>　<span style=\"font-weight:400;font-size:0.7rem;\">（商品管理から変更できます）</span>";
+  } else {
+    bar.innerHTML = "📦 使用商品：<strong>ランダム選択</strong>　<span style=\"font-weight:400;font-size:0.7rem;\">（商品管理で固定できます）</span>";
+  }
 }
 
 function openProdModal(idx) {
