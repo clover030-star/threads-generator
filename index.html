@@ -1640,21 +1640,39 @@ if ('serviceWorker' in navigator) {
 }
 
 // ===== INIT =====
-const savedKey = localStorage.getItem('openai_api_key');
-if (savedKey) document.getElementById('apiKey').value = savedKey;
-document.getElementById('apiKey').addEventListener('input', function() { localStorage.setItem('openai_api_key', this.value); });
+// ★ APIキー復元（最優先・エラーに関係なく実行）
+(function() {
+  try {
+    var savedKey = localStorage.getItem('openai_api_key');
+    if (savedKey) {
+      var apiEl = document.getElementById('apiKey');
+      if (apiEl) apiEl.value = savedKey;
+    }
+    var apiEl2 = document.getElementById('apiKey');
+    if (apiEl2) {
+      apiEl2.addEventListener('input', function() {
+        localStorage.setItem('openai_api_key', this.value);
+      });
+      apiEl2.addEventListener('change', function() {
+        localStorage.setItem('openai_api_key', this.value);
+      });
+    }
+  } catch(e) { console.error('API key init error:', e); }
+})();
 
 // ★ localStorageからタブごとのペルソナを復元
-const saved1 = localStorage.getItem('persona_tab1');
-const saved2 = localStorage.getItem('persona_tab2');
-if (saved1) tab1Persona = saved1;
-if (saved2) tab2Persona = saved2;
+try {
+  var saved1 = localStorage.getItem('persona_tab1');
+  var saved2 = localStorage.getItem('persona_tab2');
+  if (saved1) tab1Persona = saved1;
+  if (saved2) tab2Persona = saved2;
+} catch(e) {}
 
 // プルダウンを初期化して生成画面へ直行
-renderShopInfo();
-renderModeButtons();
-updateProductPreview();
-initCharSelect();
+try { renderShopInfo(); } catch(e) { console.error('renderShopInfo:', e); }
+try { renderModeButtons(); } catch(e) { console.error('renderModeButtons:', e); }
+try { updateProductPreview(); } catch(e) { console.error('updateProductPreview:', e); }
+try { initCharSelect(); } catch(e) { console.error('initCharSelect:', e); }
 showScreen('gen');
 </script>
 <script>
