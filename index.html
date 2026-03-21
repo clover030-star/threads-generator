@@ -200,6 +200,64 @@
   .mode-product.launch .mp-title { color: #2a8a4a; }
   .mode-btn.tab2-active { background: linear-gradient(135deg, #8a5fc9, #c95f8a); }
 
+  /* ★ キャラクター選択プルダウン */
+  .char-select-wrap {
+    margin: 0 20px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+  .char-select-label {
+    font-size: 0.68rem;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .char-select-row { display: flex; gap: 10px; align-items: center; }
+  .char-select {
+    flex: 1;
+    padding: 11px 14px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239e9080' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+  .char-select:focus { border-color: var(--accent1); }
+  .char-select.tab2-select:focus { border-color: var(--shop2); }
+  .char-select-desc {
+    margin-top: 10px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.7;
+    min-height: 20px;
+  }
+  .char-desc-name { font-weight: 900; margin-bottom: 3px; }
+  .char-desc-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .char-desc-tag {
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #fff0ea;
+    color: var(--accent1);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  .char-desc-tag.tab2 { background: #f0ebff; color: var(--shop2); }
+
   /* ===== 商品管理画面 ===== */
   .prod-wrap { max-width: 640px; margin: 0 auto; padding: 24px 20px; }
   .prod-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
@@ -291,61 +349,9 @@
 <div class="header">
   <div>
     <div class="header-logo">Threads ジェネレーター</div>
-    <div class="header-sub">あなたの人格で投稿文を自動生成 v2.6</div>
+    <div class="header-sub">あなたの人格で投稿文を自動生成 v3.0</div>
   </div>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <button onclick="showScreen('products')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);font-family:'Zen Kaku Gothic New',sans-serif;font-size:0.72rem;font-weight:700;cursor:pointer;color:var(--muted);">📦 商品管理</button>
-    <div class="persona-badge" id="personaBadge" onclick="showScreen('result')">
-      <span id="badgeIcon">🌟</span>
-      <span id="badgeName">診断済み</span>
-      <span style="font-size:0.6rem;color:var(--muted)">▾</span>
-    </div>
-  </div>
-</div>
-
-<!-- 診断画面 -->
-<div class="screen active" id="screen-diag">
-  <div class="diag-wrap">
-    <div class="diag-title">✨ 投稿キャラクター診断</div>
-    <div class="diag-target-banner" id="diagTargetBanner"></div>
-    <div class="diag-subtitle">30問の質問に答えて、あなただけの<br>投稿スタイルを見つけましょう。</div>
-    <div class="progress-wrap">
-      <div class="progress-label">
-        <span>Q<span id="qNum">1</span> / 30</span>
-        <span id="qPct">0%</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-    </div>
-    <div class="q-card">
-      <div class="q-axis" id="qAxis"></div>
-      <div class="q-text" id="qText"></div>
-      <div class="q-options" id="qOptions"></div>
-    </div>
-    <div class="q-nav">
-      <button class="q-btn q-btn-prev" id="prevBtn" onclick="prevQ()" disabled>← 前へ</button>
-      <button class="q-btn q-btn-next" id="nextBtn" onclick="nextQ()" disabled>次へ →</button>
-    </div>
-  </div>
-</div>
-
-<!-- 結果画面 -->
-<div class="screen" id="screen-result">
-  <div class="result-wrap">
-    <div class="result-icon" id="resultIcon">🌟</div>
-    <div class="result-shop-badge" id="resultShopBadge"></div>
-    <div class="result-type" id="resultType"></div>
-    <div class="result-desc" id="resultDesc"></div>
-    <div class="result-card">
-      <div class="result-card-title">あなたの投稿キャラクター</div>
-      <div class="result-trait" id="resultTraits"></div>
-      <div class="result-persona" id="resultPersona"></div>
-    </div>
-    <div class="result-actions">
-      <button class="btn-primary" onclick="goToGen()">このキャラクターで投稿文を生成する ✨</button>
-      <button class="btn-other-shop" id="diagOtherShopBtn" onclick="diagOtherShop()"></button>
-      <button class="btn-secondary" onclick="resetDiag()">もう一度診断する（現在のSHOP用）</button>
-    </div>
-  </div>
+  <button onclick="showScreen('products')" style="padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);font-family:'Zen Kaku Gothic New',sans-serif;font-size:0.72rem;font-weight:700;cursor:pointer;color:var(--muted);">📦 商品管理</button>
 </div>
 
 <!-- 商品管理画面 -->
@@ -447,13 +453,15 @@
 
   <div class="shop-info" id="shopInfo"></div>
 
-  <div class="persona-indicator" id="personaIndicator">
-    <div class="pi-icon" id="piIcon">🌟</div>
-    <div class="pi-text">
-      <div class="pi-name" id="piName">未診断</div>
-      <div class="pi-desc" id="piDesc">診断してからキャラクターを設定してください</div>
+  <!-- ★ キャラクター選択プルダウン -->
+  <div class="char-select-wrap" id="charSelectWrap">
+    <div class="char-select-label">投稿キャラクター</div>
+    <div class="char-select-row">
+      <select class="char-select" id="charSelect" onchange="onCharSelectChange()">
+        <option value="">── キャラクターを選択 ──</option>
+      </select>
     </div>
-    <div id="piAction"></div>
+    <div class="char-select-desc" id="charSelectDesc"></div>
   </div>
 
   <div class="apikey-wrap">
@@ -754,6 +762,11 @@ function getActivePersona() {
   return activeTab === 1 ? tab1Persona : tab2Persona;
 }
 
+// ペルソナインジケーター（旧）は空実装に（プルダウンに統合）
+function updatePersonaIndicator() {
+  updatePersonaStatusBanner();
+}
+
 // ===== SCREENS =====
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1012,6 +1025,7 @@ function activateShop(tabNum, shopId) {
   document.getElementById('genBtn').className = 'gen-btn ' + s.color;
   renderShopInfo();
   updatePersonaIndicator(); // ★ タブ切り替え時にペルソナを再描画
+  updateCharSelectUI();     // ★ プルダウンをタブに応じて更新
   renderModeButtons();      // ★ モードボタンをタブに応じて切替
   updateProductPreview();   // ★ 商品候補プレビューを更新
   document.getElementById('daysWrap').innerHTML = `<div class="empty"><span class="empty-icon">✍️</span>上のボタンを押すと<br>7日分の投稿文が自動生成されます</div>`;
@@ -1413,6 +1427,76 @@ document.addEventListener('click', (e) => {
   if (e.target.id === 'prodModalOverlay') closeProductModal();
 });
 
+// ===== キャラクター選択プルダウン =====
+
+// プルダウンを初期化
+function initCharSelect() {
+  const sel = document.getElementById('charSelect');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">── キャラクターを選択 ──</option>';
+  Object.entries(PERSONA_TYPES).forEach(([key, p]) => {
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = p.icon + ' ' + p.name;
+    sel.appendChild(opt);
+  });
+  // 現在のタブのペルソナを反映
+  updateCharSelectUI();
+}
+
+// タブ切り替え時にプルダウンを更新
+function updateCharSelectUI() {
+  const sel = document.getElementById('charSelect');
+  if (!sel) return;
+  const persona = getActivePersona();
+  sel.value = persona || '';
+
+  // タブに応じてスタイル変更
+  sel.className = 'char-select' + (activeTab === 2 ? ' tab2-select' : '');
+
+  // 説明文を更新
+  updateCharSelectDesc(persona);
+}
+
+// 説明文エリアを更新
+function updateCharSelectDesc(personaKey) {
+  const desc = document.getElementById('charSelectDesc');
+  if (!desc) return;
+  if (!personaKey || !PERSONA_TYPES[personaKey]) {
+    desc.innerHTML = '<span style="color:var(--muted);font-size:0.78rem;">▲ キャラクターを選んでください</span>';
+    return;
+  }
+  const p = PERSONA_TYPES[personaKey];
+  const isTab2 = activeTab === 2;
+  const tagClass = isTab2 ? 'char-desc-tag tab2' : 'char-desc-tag';
+  desc.innerHTML = \`
+    <div class="char-desc-name" style="color:\${isTab2 ? 'var(--shop2)' : 'var(--accent1)'}">\${p.icon} \${p.name}</div>
+    <div style="color:var(--muted);font-size:0.76rem;margin-bottom:6px;">\${p.desc}</div>
+    <div class="char-desc-tags">\${p.traits.map(t => \`<span class="\${tagClass}">\${t}</span>\`).join('')}</div>
+  \`;
+}
+
+// プルダウン変更時
+function onCharSelectChange() {
+  const sel = document.getElementById('charSelect');
+  const selectedKey = sel.value;
+
+  // タブごとに保存
+  if (activeTab === 1) {
+    tab1Persona = selectedKey || null;
+    if (selectedKey) localStorage.setItem('persona_tab1', selectedKey);
+    else localStorage.removeItem('persona_tab1');
+  } else {
+    tab2Persona = selectedKey || null;
+    if (selectedKey) localStorage.setItem('persona_tab2', selectedKey);
+    else localStorage.removeItem('persona_tab2');
+  }
+
+  updateCharSelectDesc(selectedKey);
+  updatePersonaStatusBanner();
+  updateProductPreview();
+}
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
   caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
@@ -1430,26 +1514,12 @@ const saved2 = localStorage.getItem('persona_tab2');
 if (saved1) tab1Persona = saved1;
 if (saved2) tab2Persona = saved2;
 
-// ★ 起動時：保存済みペルソナがあれば生成画面へ直行、なければ診断へ
+// プルダウンを初期化して生成画面へ直行
 renderShopInfo();
 renderModeButtons();
 updateProductPreview();
-
-if (tab1Persona || tab2Persona) {
-  // どちらか1つでも診断済みなら生成画面へ
-  updatePersonaIndicator();
-  showScreen('gen');
-  // 未診断のタブがあればバッジで通知
-  renderQuestion(); // バックグラウンドで準備だけ
-} else {
-  // 両方未診断なら診断画面へ
-  diagnosisTarget = 1;
-  const initBanner = document.getElementById('diagTargetBanner');
-  initBanner.className = 'diag-target-banner tab1';
-  initBanner.textContent = '📋 SHOP01（30代ママ）用のキャラクター診断';
-  renderQuestion();
-  showScreen('diag');
-}
+initCharSelect();
+showScreen('gen');
 </script>
 </body>
 </html>
