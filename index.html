@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Threads 投稿ジェネレーター</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/eruda/3.0.1/eruda.min.js"></script>
+<script>eruda.init(); eruda.show();</script>
 <style>
   :root {
     --bg: #faf8f5; --surface: #ffffff; --border: #ede8e0;
@@ -20,6 +22,28 @@
   .header-logo { font-size: 1.1rem; font-weight: 900; background: var(--accent-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .header-sub { font-size: 0.7rem; color: var(--muted); font-family: "DM Mono", monospace; }
   .header-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.72rem; font-weight: 700; cursor: pointer; color: var(--muted); }
+
+  /* ===== ハンバーガー・ドロワー ===== */
+  .hamburger-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); }
+  .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; }
+  .drawer-overlay.open { display: block; }
+  .drawer { position: fixed; top: 0; right: -100%; width: 75%; max-width: 300px; height: 100vh; background: var(--surface); z-index: 201; transition: right 0.28s cubic-bezier(0.4,0,0.2,1); box-shadow: -4px 0 24px rgba(0,0,0,0.12); display: flex; flex-direction: column; }
+  .drawer.open { right: 0; }
+  .drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 18px 14px; border-bottom: 1px solid var(--border); }
+  .drawer-title { font-size: 1rem; font-weight: 900; background: var(--accent-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .drawer-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); font-size: 0.9rem; cursor: pointer; color: var(--muted); }
+  .drawer-body { flex: 1; overflow-y: auto; padding: 16px 12px; }
+  .drawer-section-label { font-size: 0.65rem; font-family: "DM Mono", monospace; color: var(--muted); margin-bottom: 6px; padding: 0 6px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .drawer-item { width: 100%; text-align: left; padding: 11px 14px; border-radius: 10px; border: none; background: transparent; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--text); cursor: pointer; display: block; margin-bottom: 4px; }
+  .drawer-item:hover { background: var(--bg); }
+  .drawer-item.danger { color: #c94040; }
+  .drawer-item.danger:hover { background: #fff0f0; }
+  .drawer-footer { margin-top: 24px; padding: 12px 6px; font-size: 0.65rem; color: var(--muted); font-family: "DM Mono", monospace; }
+
+  /* ===== 右サイドフローティングボタン ===== */
+  .fab-wrap { position: fixed; right: 12px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 150; }
+  .fab-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); box-shadow: 0 2px 12px rgba(0,0,0,0.12); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.15s, box-shadow 0.15s; }
+  .fab-btn:active { transform: scale(0.92); box-shadow: 0 1px 6px rgba(0,0,0,0.1); }
 
   /* キャラクター選択 */
   .char-wrap { margin: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); }
@@ -162,7 +186,34 @@
     <div class="header-logo">Threads ジェネレーター</div>
     <div class="header-sub">あなたの人格で投稿文を自動生成  v3.1</div>
   </div>
-  <button class="header-btn" onclick="showScreen('products')">📦 商品管理</button>
+  <button class="hamburger-btn" onclick="toggleDrawer()" id="hamburgerBtn">☰</button>
+</div>
+
+<!-- ドロワーオーバーレイ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- ドロワーメニュー -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-title">メニュー</div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-section-label">画面</div>
+    <button class="drawer-item" onclick="drawerGo('gen')">✍️ 投稿文を生成する</button>
+    <button class="drawer-item" onclick="drawerGo('products')">📦 商品管理</button>
+
+    <div class="drawer-section-label" style="margin-top:16px">ショートカット</div>
+    <button class="drawer-item" onclick="drawerAction('scroll-rewrite')">✏️ リライト欄へ</button>
+    <button class="drawer-item" onclick="drawerAction('scroll-schedule')">📅 スケジュール生成へ</button>
+    <button class="drawer-item" onclick="drawerAction('scroll-apikey')">🔑 APIキー設定へ</button>
+
+    <div class="drawer-section-label" style="margin-top:16px">データ</div>
+    <button class="drawer-item danger" onclick="drawerAction('clear-api')">🗑 APIキーを削除</button>
+    <button class="drawer-item danger" onclick="drawerAction('clear-all')">⚠️ 全データをリセット</button>
+
+    <div class="drawer-footer">Threads Generator v3.1</div>
+  </div>
 </div>
 
 <!-- 生成画面 -->
@@ -518,6 +569,56 @@ var tab2SelProd = -1;
 // ============================================================
 // 初期化
 // ============================================================
+// ============================================================
+// ドロワーメニュー
+// ============================================================
+function toggleDrawer() {
+  var drawer = document.getElementById("drawer");
+  var overlay = document.getElementById("drawerOverlay");
+  var isOpen = drawer.classList.contains("open");
+  if (isOpen) { closeDrawer(); } else { openDrawer(); }
+}
+function openDrawer() {
+  document.getElementById("drawer").classList.add("open");
+  document.getElementById("drawerOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeDrawer() {
+  document.getElementById("drawer").classList.remove("open");
+  document.getElementById("drawerOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+function drawerGo(screen) {
+  closeDrawer();
+  showScreen(screen);
+}
+function drawerAction(action) {
+  closeDrawer();
+  setTimeout(function() {
+    if (action === "scroll-rewrite") {
+      var el = document.getElementById("rewriteWrap");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else if (action === "scroll-schedule") {
+      var el = document.querySelector(".schedule-wrap");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else if (action === "scroll-apikey") {
+      var el = document.getElementById("apiKey");
+      if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); el.focus(); }
+    } else if (action === "clear-api") {
+      if (confirm("APIキーを削除しますか？")) {
+        localStorage.removeItem("openai_api_key");
+        document.getElementById("apiKey").value = "";
+        alert("削除しました");
+      }
+    } else if (action === "clear-all") {
+      if (confirm("全データ（APIキー・キャラクター・商品・設定）をリセットしますか？\nこの操作は取り消せません。")) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+  }, 300);
+}
+
 window.onload = function() {
   // APIキー復元
   var k = localStorage.getItem("openai_api_key");
@@ -1240,5 +1341,13 @@ document.addEventListener("click", function(e) {
   if (e.target.id === "prodModal") closeProdModal();
 });
 </script>
+<!-- 右サイドフローティングボタン -->
+<div class="fab-wrap">
+  <button class="fab-btn" onclick="drawerGo('products')" title="商品管理">📦</button>
+  <button class="fab-btn" onclick="drawerAction('scroll-rewrite')" title="リライト">✏️</button>
+  <button class="fab-btn" onclick="drawerAction('scroll-schedule')" title="スケジュール">📅</button>
+  <button class="fab-btn" onclick="drawerAction('scroll-apikey')" title="APIキー">🔑</button>
+</div>
+
 </body>
 </html>
