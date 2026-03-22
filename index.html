@@ -28,6 +28,21 @@
   .char-select:focus { border-color: var(--accent1); }
   .char-desc { margin-top: 8px; font-size: 0.78rem; color: var(--muted); line-height: 1.6; min-height: 20px; }
 
+  /* ===== リライト ===== */
+  .rewrite-wrap { margin: 0 20px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .rewrite-label { font-size: 0.68rem; font-family: "DM Mono", monospace; color: var(--muted); margin-bottom: 4px; display: block; }
+  .rewrite-hint { font-size: 0.72rem; color: var(--muted); margin-bottom: 8px; line-height: 1.5; }
+  .rewrite-input { width: 100%; min-height: 80px; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.82rem; line-height: 1.6; resize: vertical; background: var(--bg); color: var(--text); box-sizing: border-box; }
+  .rewrite-input:focus { outline: none; border-color: var(--shop1); }
+  .rewrite-btn { margin-top: 8px; width: 100%; padding: 10px; border-radius: 10px; border: none; background: linear-gradient(135deg, #e8845a, #c96030); color: #fff; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+  .rewrite-btn.shop2-style { background: linear-gradient(135deg, #8a5fc9, #6a40a9); }
+  .rewrite-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .rewrite-result-wrap { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+  .rewrite-result { font-size: 0.85rem; line-height: 1.8; white-space: pre-wrap; color: var(--text); }
+  .rewrite-actions { margin-top: 8px; display: flex; justify-content: flex-end; }
+  .rewrite-copy-btn { padding: 5px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.75rem; font-weight: 700; cursor: pointer; color: var(--muted); }
+  .rewrite-copy-btn.copied { background: #eafff5; color: #2a8a4a; border-color: #a0e0b0; }
+
   /* SHOP tabs */
   .shop-tabs { display: flex; padding: 16px 20px 0; }
   .shop-tab-wrap { flex: 1; position: relative; }
@@ -191,6 +206,20 @@
       <option value="community">🤝 仲間集めママ型　─　コミュニティ◎・対等関係</option>
     </select>
     <div class="char-desc" id="charDesc"></div>
+  </div>
+
+  <!-- リライト入力欄 -->
+  <div class="rewrite-wrap" id="rewriteWrap">
+    <label class="rewrite-label">✏️ 参考文・キーワードをリライト</label>
+    <div class="rewrite-hint">参考にしたい投稿・文章・単語を貼り付けると、選択中のキャラクターのスタイルで書き直します</div>
+    <textarea class="rewrite-input" id="rewriteInput" placeholder="例）ホットクックを使ったら夕飯が楽になった&#10;例）「時短 育児 便利グッズ おすすめ」&#10;例）他のアカウントの投稿文をそのままコピペしてもOK"></textarea>
+    <button class="rewrite-btn" id="rewriteBtn" onclick="rewritePost()">🪄 このキャラで書き直す</button>
+    <div class="rewrite-result-wrap" id="rewriteResultWrap" style="display:none">
+      <div class="rewrite-result" id="rewriteResult"></div>
+      <div class="rewrite-actions">
+        <button class="rewrite-copy-btn" id="rewriteCopyBtn" onclick="copyRewrite()">コピー</button>
+      </div>
+    </div>
   </div>
 
   <!-- 投稿モード -->
@@ -545,6 +574,7 @@ function activateShop(tabNum, shopId) {
   renderCharSelect();
   updateStatusBanner();
   updateCurrentProdBar();
+  updateRewriteBtnStyle();
   document.getElementById("daysWrap").innerHTML = "<div class=\"empty\">✍️<br>上のボタンを押すと<br>7日分の投稿文が自動生成されます</div>";
 }
 
@@ -804,6 +834,88 @@ async function generate() {
     btn.classList.remove("loading");
     btn.innerHTML = "✨ 投稿シリーズを生成する";
   })();
+}
+
+// ============================================================
+// リライト機能
+// ============================================================
+async function rewritePost() {
+  var apiKey = document.getElementById("apiKey").value.trim();
+  if (!apiKey) { alert("APIキーを入力してください"); return; }
+
+  var input = document.getElementById("rewriteInput").value.trim();
+  if (!input) { alert("参考文またはキーワードを入力してください"); return; }
+
+  var personaKey = (activeTab === 1 ? tab1Persona : tab2Persona) || "sun";
+  var p = PERSONA_TYPES[personaKey];
+  var s = SHOPS[currentShop];
+
+  var btn = document.getElementById("rewriteBtn");
+  var resultWrap = document.getElementById("rewriteResultWrap");
+  var resultEl = document.getElementById("rewriteResult");
+
+  btn.disabled = true;
+  btn.textContent = "✍️ リライト中...";
+  resultWrap.style.display = "none";
+
+  var prompt =
+    "あなたは" + s.target + "向けのThreadsアカウントの中の人です。\n\n" +
+    "【投稿者のキャラクター】\n" +
+    "タイプ：" + p.name + "\n" +
+    "特徴：" + p.desc + "\n" +
+    "文体スタイル：" + p.tone + "\n\n" +
+    "【ターゲット・テーマ】\n" +
+    "ターゲット：" + s.target + "\n" +
+    "テーマ：" + s.theme + "\n\n" +
+    "【リライト元の素材】\n" + input + "\n\n" +
+    "【リライト条件】\n" +
+    "・上記の素材（投稿文・文章・単語・メモ等）を参考にして、このキャラクターのスタイルで書き直してください\n" +
+    "・素材が短いキーワードや単語でもThreads投稿として自然な文章に膨らませること\n" +
+    "・元の内容のエッセンスを活かしつつ、このキャラクターらしい語り口・温度感に変換\n" +
+    "・文字数：400〜600文字\n" +
+    "・ハッシュタグなし\n" +
+    "・「楽天」「アフィリエイト」「PR」は使わない\n" +
+    "・投稿文のみ出力（説明文不要）";
+
+  try {
+    var r = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
+      body: JSON.stringify({ model: "gpt-4o-mini", max_tokens: 700, messages: [{ role: "user", content: prompt }] })
+    });
+    var data = await r.json();
+    var text = (data.choices && data.choices[0]) ? data.choices[0].message.content : ("エラー: " + (data.error ? data.error.message : "不明"));
+    resultEl.textContent = text;
+    resultWrap.style.display = "block";
+    document.getElementById("rewriteCopyBtn").dataset.text = text;
+  } catch(e) {
+    resultEl.textContent = "エラーが発生しました。もう一度お試しください。";
+    resultWrap.style.display = "block";
+  }
+
+  btn.disabled = false;
+  btn.textContent = "🪄 このキャラで書き直す";
+}
+
+function copyRewrite() {
+  var btn = document.getElementById("rewriteCopyBtn");
+  var text = btn.dataset.text || document.getElementById("rewriteResult").textContent;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = "コピー済み ✓";
+    btn.classList.add("copied");
+    setTimeout(function() { btn.textContent = "コピー"; btn.classList.remove("copied"); }, 2000);
+  });
+}
+
+function updateRewriteBtnStyle() {
+  var btn = document.getElementById("rewriteBtn");
+  if (!btn) return;
+  if (activeTab === 2) {
+    btn.classList.add("shop2-style");
+  } else {
+    btn.classList.remove("shop2-style");
+  }
 }
 
 function copyPost(bodyId, copyId) {
