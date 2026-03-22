@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Threads 投稿ジェネレーター</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/eruda@3/eruda.min.js"></script>
-<script>eruda.init(); eruda.show();</script>
 <style>
   :root {
     --bg: #faf8f5; --surface: #ffffff; --border: #ede8e0;
@@ -855,7 +853,91 @@ function getFormula() {
   return FORMULAS.STEALTH7;
 }
 
-function buildPrompt(step, formula, rewriteRef) {
+// ============================================================
+// 楽天セールカレンダー
+// ============================================================
+// お買い物マラソン予定（過去実績ベース）
+var MARATHON_PERIODS = [
+  { start: "2026-04-04", end: "2026-04-10" },
+  { start: "2026-04-14", end: "2026-04-17" },
+  { start: "2026-04-24", end: "2026-04-27" },
+  { start: "2026-05-09", end: "2026-05-16" },
+  { start: "2026-06-04", end: "2026-06-11" }, // スーパーSALEと重複
+  { start: "2026-07-04", end: "2026-07-10" },
+  { start: "2026-08-04", end: "2026-08-10" },
+  { start: "2026-09-04", end: "2026-09-11" }, // スーパーSALE
+  { start: "2026-10-04", end: "2026-10-10" },
+  { start: "2026-11-04", end: "2026-11-10" }
+];
+// 楽天スーパーSALE（年4回：3・6・9・12月の4日〜11日）
+var SUPER_SALE_PERIODS = [
+  { start: "2026-06-04", end: "2026-06-11" },
+  { start: "2026-09-04", end: "2026-09-11" },
+  { start: "2026-12-04", end: "2026-12-11" }
+];
+
+function dateToStr(d) {
+  var y = d.getFullYear();
+  var m = String(d.getMonth()+1).padStart(2,"0");
+  var dd = String(d.getDate()).padStart(2,"0");
+  return y + "-" + m + "-" + dd;
+}
+
+function getSaleInfo(dateStr) {
+  // 0と5のつく日チェック
+  var day = parseInt(dateStr.slice(8));
+  var isPointDay = (day % 5 === 0);
+
+  // マラソンチェック
+  var isMarathon = MARATHON_PERIODS.some(function(p) {
+    return dateStr >= p.start && dateStr <= p.end;
+  });
+
+  // スーパーSALEチェック
+  var isSuperSale = SUPER_SALE_PERIODS.some(function(p) {
+    return dateStr >= p.start && dateStr <= p.end;
+  });
+
+  if (isSuperSale && isPointDay) return "supersale_pointday";
+  if (isSuperSale) return "supersale";
+  if (isMarathon && isPointDay) return "marathon_pointday";
+  if (isMarathon) return "marathon";
+  if (isPointDay) return "pointday";
+  return null;
+}
+
+function getSalePart(saleType) {
+  if (!saleType) return "";
+
+  var hint = "";
+  if (saleType === "supersale_pointday") {
+    hint = "今日は楽天でポイントが特に多めになる日みたいです。気になっていた方はプロフのリンクからどうぞ。";
+  } else if (saleType === "supersale") {
+    hint = "気になっていた方、今日は楽天でお得な日みたいです。プロフのリンクから見てみてください。";
+  } else if (saleType === "marathon_pointday") {
+    hint = "今日はポイントが多めになる日みたいです。気になる方はプロフのリンクからどうぞ。";
+  } else if (saleType === "marathon") {
+    hint = "気になっていた方、今日は楽天でポイントが貯まりやすい日みたいです。";
+  } else if (saleType === "pointday") {
+    hint = "今日はポイントが多めになる日みたいです。プロフのリンクから見てみてください。";
+  }
+
+  return "\n\n【重要：セール情報の添え方（厳守）】\n" +
+    "本文は共感・体験談・悩み解決を主役として書くこと。\n" +
+    "セール情報は本文が完全に終わった後、最後に1行だけ添える。\n" +
+    "絶対にやってはいけないこと：\n" +
+    "・「今がお得！」「絶対買い！」「セール中！」などの購買煽り\n" +
+    "・！や絵文字を使った強調\n" +
+    "・セール情報を本文の途中に混ぜること\n" +
+    "・2行以上のセール説明\n" +
+    "OK例（こういう温度感で）：\n" +
+    "「気になっていた方、今日はポイントが多めになる日みたいです。プロフから見てみてください。」\n" +
+    "NG例：\n" +
+    "「今日は楽天マラソン中でポイント最大10倍！！ぜひプロフのリンクからチェックしてみてね✨」\n" +
+    "添える1行の内容：「" + hint + "」";
+}
+
+function buildPrompt(step, formula, rewriteRef, saleType) {
   var s = SHOPS[currentShop];
   var personaKey = (activeTab === 1 ? tab1Persona : tab2Persona) || "sun";
   var p = PERSONA_TYPES[personaKey];
@@ -886,6 +968,9 @@ function buildPrompt(step, formula, rewriteRef) {
     refPart = "\n\n【参考素材（アイデア・トーン・内容のヒントとして使うこと）】\n" + rewriteRef +
       "\n※この素材のエッセンス・テーマ・感情を活かしつつ、上記キャラクターのスタイルで独自に書き直すこと。素材をそのままコピーしない。";
   }
+
+  // ★ セール情報
+  var salePart = getSalePart(saleType || null);
   
   return "あなたは" + s.target + "向けのThreadsアカウントの中の人です。以下の条件で投稿文を日本語で書いてください。\n\n" +
     "【投稿者のキャラクター】\n" +
@@ -897,7 +982,8 @@ function buildPrompt(step, formula, rewriteRef) {
     "ステップ：" + step.label + "\n" +
     "目的：" + step.desc +
     productPart +
-    refPart + "\n\n" +
+    refPart +
+    salePart + "\n\n" +
     "【投稿条件】\n" +
     "・ターゲット：" + s.target + "\n" +
     "・テーマ：" + s.theme + "\n" +
@@ -919,6 +1005,10 @@ async function generate() {
   // ★ リライト参考素材を取得
   var rewriteRef = document.getElementById("rewriteInput").value.trim();
 
+  // ★ スケジュールのスタート日を取得（セール判定用）
+  var scheduleStartVal = document.getElementById("scheduleStart").value;
+  var scheduleStartDate = scheduleStartVal ? new Date(scheduleStartVal + "T00:00:00") : null;
+
   var btn = document.getElementById("genBtn");
   var wrap = document.getElementById("daysWrap");
   btn.classList.add("loading");
@@ -936,19 +1026,43 @@ async function generate() {
   for (var i = 0; i < formula.steps.length; i++) {
     var step = formula.steps[i];
     var day = DAYS_JP[i] || (i + 1) + "日目";
+
+    // ★ セール判定
+    var saleType = null;
+    var postDateStr = "";
+    if (scheduleStartDate) {
+      var postDate = new Date(scheduleStartDate);
+      postDate.setDate(scheduleStartDate.getDate() + i);
+      postDateStr = dateToStr(postDate);
+      saleType = getSaleInfo(postDateStr);
+    }
+
     var card = document.createElement("div");
     card.className = "day-card";
     var bodyId = "body" + i;
     var copyId = "copy" + i;
+
+    // セールバッジ
+    var saleBadge = "";
+    if (saleType === "supersale" || saleType === "supersale_pointday") {
+      saleBadge = "<span style=\"background:#e8305a;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:6px;margin-left:6px;\">🎉 スーパーSALE</span>";
+    } else if (saleType === "marathon" || saleType === "marathon_pointday") {
+      saleBadge = "<span style=\"background:#e8845a;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:6px;margin-left:6px;\">🏃 マラソン</span>";
+    } else if (saleType === "pointday") {
+      saleBadge = "<span style=\"background:#5a9ae8;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:6px;margin-left:6px;\">⭐ ポイントUP</span>";
+    }
+
+    var dateLabel = postDateStr ? "<span style=\"font-size:0.7rem;color:var(--muted);margin-left:4px;\">" + postDateStr + "</span>" : "";
+
     card.innerHTML =
       "<div class=\"day-header\">" +
-        "<span class=\"day-label\">DAY " + (i+1) + " · " + day + "</span>" +
+        "<span class=\"day-label\">DAY " + (i+1) + " · " + day + dateLabel + saleBadge + "</span>" +
         "<span class=\"day-step\">" + step.label + "</span>" +
       "</div>" +
       "<div class=\"day-body\" id=\"" + bodyId + "\"><span style=\"color:#bbb\">⏳ 待機中...</span></div>" +
       "<div class=\"day-footer\"><button class=\"copy-btn\" id=\"" + copyId + "\" onclick=\"copyPost('" + bodyId + "','" + copyId + "')\" disabled>コピー</button></div>";
     wrap.appendChild(card);
-    cards.push({ step: step, bodyId: bodyId, copyId: copyId });
+    cards.push({ step: step, bodyId: bodyId, copyId: copyId, saleType: saleType });
   }
 
   // 1件ずつ順番に生成
@@ -959,7 +1073,7 @@ async function generate() {
       btn.innerHTML = "<div class=\"spinner\"></div> 生成中 " + (j+1) + " / " + total + "...";
       document.getElementById(c.bodyId).innerHTML = "<span style=\"color:#e8845a\">✍️ 生成中...</span>";
       try {
-        var prompt = buildPrompt(c.step, formula, rewriteRef);
+        var prompt = buildPrompt(c.step, formula, rewriteRef, c.saleType);
         var r = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
