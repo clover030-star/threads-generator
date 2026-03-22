@@ -1028,7 +1028,16 @@ async function generate() {
   var cards = [];
   for (var i = 0; i < formula.steps.length; i++) {
     var step = formula.steps[i];
-    var day = DAYS_JP[i] || (i + 1) + "日目";
+    // 実際の日付から曜日を取得（スタート日がある場合）
+    var YOUBI_FULL = ["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"];
+    var day;
+    if (scheduleStartDate) {
+      var tmpDate = new Date(scheduleStartDate);
+      tmpDate.setDate(scheduleStartDate.getDate() + i);
+      day = YOUBI_FULL[tmpDate.getDay()];
+    } else {
+      day = DAYS_JP[i] || (i + 1) + "日目";
+    }
 
     // ★ セール判定 + 投稿時間生成
     var saleType = null;
