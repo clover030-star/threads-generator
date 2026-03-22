@@ -120,6 +120,7 @@
   .schedule-row:last-child { border-bottom: none; }
   .schedule-row.header { background: #f5f5f5; font-weight: 700; color: var(--muted); font-size: 0.7rem; }
   .schedule-row.weekend { background: #fff8f0; }
+  .schedule-row.sale-row { background: #fff5f0; }
   .schedule-cell { padding: 8px 10px; line-height: 1.4; }
   .schedule-time { font-family: "DM Mono", monospace; font-weight: 700; color: var(--shop1); }
   .schedule-time.shop2 { color: var(--shop2); }
@@ -1234,14 +1235,17 @@ function generateSchedule() {
     var mm = String(d.getMonth()+1).padStart(2,"0");
     var dd2 = String(d.getDate()).padStart(2,"0");
     var dayStr = d.getFullYear() + "/" + mm + "/" + dd2;
+    var dateKey = d.getFullYear() + "-" + mm + "-" + dd2;
     var youbi = DAYS_JP2[d.getDay()];
+    var saleType = getSaleInfo(dateKey);
 
     rows.push({
       date: dayStr,
       youbi: youbi,
       isWE: isWE,
       time: t.str,
-      label: steps[i].label
+      label: steps[i].label,
+      saleType: saleType
     });
   }
 
@@ -1255,9 +1259,19 @@ function generateSchedule() {
     "</div>";
 
   rows.forEach(function(r) {
-    html += "<div class=\"schedule-row" + (r.isWE ? " weekend" : "") + "\">" +
+    // セールバッジ
+    var badge = "";
+    if (r.saleType === "supersale" || r.saleType === "supersale_pointday") {
+      badge = " <span style=\"background:#e8305a;color:#fff;font-size:0.6rem;font-weight:700;padding:1px 5px;border-radius:4px;\">🎉SALE</span>";
+    } else if (r.saleType === "marathon" || r.saleType === "marathon_pointday") {
+      badge = " <span style=\"background:#e8845a;color:#fff;font-size:0.6rem;font-weight:700;padding:1px 5px;border-radius:4px;\">🏃PT</span>";
+    } else if (r.saleType === "pointday") {
+      badge = " <span style=\"background:#5a9ae8;color:#fff;font-size:0.6rem;font-weight:700;padding:1px 5px;border-radius:4px;\">⭐PT</span>";
+    }
+    var rowClass = "schedule-row" + (r.isWE ? " weekend" : "") + (r.saleType ? " sale-row" : "");
+    html += "<div class=\"" + rowClass + "\">" +
       "<div class=\"schedule-cell\">" + r.date + "</div>" +
-      "<div class=\"schedule-cell\">" + r.youbi + (r.isWE ? "🌸" : "") + "</div>" +
+      "<div class=\"schedule-cell\">" + r.youbi + (r.isWE ? "🌸" : "") + badge + "</div>" +
       "<div class=\"schedule-cell schedule-time" + (isShop2 ? " shop2" : "") + "\">" + r.time + "</div>" +
       "<div class=\"schedule-cell\">" + r.label + "</div>" +
       "</div>";
