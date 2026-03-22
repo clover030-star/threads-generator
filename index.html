@@ -722,7 +722,7 @@ function getFormula() {
   return FORMULAS.STEALTH7;
 }
 
-function buildPrompt(step, formula) {
+function buildPrompt(step, formula, rewriteRef) {
   var s = SHOPS[currentShop];
   var personaKey = (activeTab === 1 ? tab1Persona : tab2Persona) || "sun";
   var p = PERSONA_TYPES[personaKey];
@@ -746,6 +746,13 @@ function buildPrompt(step, formula) {
   } else if (!step.product) {
     productPart = "\n\n【重要】この投稿では商品・サービスの紹介は一切しない。純粋に共感・気づき・体験談として読者の心に刺さる投稿を書く。";
   }
+
+  // ★ リライト参考素材
+  var refPart = "";
+  if (rewriteRef) {
+    refPart = "\n\n【参考素材（アイデア・トーン・内容のヒントとして使うこと）】\n" + rewriteRef +
+      "\n※この素材のエッセンス・テーマ・感情を活かしつつ、上記キャラクターのスタイルで独自に書き直すこと。素材をそのままコピーしない。";
+  }
   
   return "あなたは" + s.target + "向けのThreadsアカウントの中の人です。以下の条件で投稿文を日本語で書いてください。\n\n" +
     "【投稿者のキャラクター】\n" +
@@ -756,7 +763,8 @@ function buildPrompt(step, formula) {
     "フォーミュラー：" + formula.name + "\n" +
     "ステップ：" + step.label + "\n" +
     "目的：" + step.desc +
-    productPart + "\n\n" +
+    productPart +
+    refPart + "\n\n" +
     "【投稿条件】\n" +
     "・ターゲット：" + s.target + "\n" +
     "・テーマ：" + s.theme + "\n" +
@@ -774,17 +782,20 @@ async function generate() {
   var formula = getFormula();
   var mode = getMode();
   currentProduct = (mode === "affiliate") ? pickProduct(currentShop) : null;
-  
+
+  // ★ リライト参考素材を取得
+  var rewriteRef = document.getElementById("rewriteInput").value.trim();
+
   var btn = document.getElementById("genBtn");
   var wrap = document.getElementById("daysWrap");
   btn.classList.add("loading");
   btn.innerHTML = "<div class=\"spinner\"></div> 生成中...";
   wrap.innerHTML = "";
-  
+
   // バナー
   var bannerEl = document.createElement("div");
   bannerEl.style.cssText = "margin-bottom:14px;padding:12px 14px;background:#fff0ea;border:1px solid #ffd5c0;border-radius:12px;font-size:0.8rem;font-weight:700;color:#e8845a;";
-  bannerEl.textContent = "✨ " + formula.name + "（" + formula.steps.length + "投稿シリーズ）" + (currentProduct ? "　📦 " + currentProduct.name : "");
+  bannerEl.textContent = "✨ " + formula.name + "（" + formula.steps.length + "投稿シリーズ）" + (currentProduct ? "　📦 " + currentProduct.name : "") + (rewriteRef ? "　✏️ 参考素材あり" : "");
   wrap.appendChild(bannerEl);
   
   // カードを先に全部作る
@@ -815,7 +826,7 @@ async function generate() {
       btn.innerHTML = "<div class=\"spinner\"></div> 生成中 " + (j+1) + " / " + total + "...";
       document.getElementById(c.bodyId).innerHTML = "<span style=\"color:#e8845a\">✍️ 生成中...</span>";
       try {
-        var prompt = buildPrompt(c.step, formula);
+        var prompt = buildPrompt(c.step, formula, rewriteRef);
         var r = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
