@@ -783,6 +783,7 @@ function renderModeButtons() {
   if (activeTab === 1) {
     btns.innerHTML =
       "<button class=\"mode-btn " + (mode === "affiliate" ? "active" : "") + "\" onclick=\"setMode('affiliate')\">🎯 アフィリエイト特化</button>" +
+      "<button class=\"mode-btn " + (mode === "launch7" ? "active" : "") + "\" onclick=\"setMode('launch7')\">🌱 立ち上げ7日</button>" +
       "<button class=\"mode-btn " + (mode === "normal" ? "active" : "") + "\" onclick=\"setMode('normal')\">✍️ 通常モード</button>";
   } else {
     btns.innerHTML =
