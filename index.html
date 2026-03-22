@@ -84,6 +84,24 @@
 
   /* Generate button */
   .gen-wrap { padding: 0 20px 14px; }
+
+  /* ===== 投稿スケジュール ===== */
+  .schedule-wrap { margin: 0 20px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .schedule-label { font-size: 0.68rem; font-family: "DM Mono", monospace; color: var(--muted); margin-bottom: 4px; display: block; }
+  .schedule-hint { font-size: 0.72rem; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+  .schedule-input-row { display: flex; gap: 8px; align-items: center; }
+  .schedule-date-input { flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.82rem; background: var(--bg); color: var(--text); }
+  .schedule-btn { padding: 8px 18px; border-radius: 10px; border: none; background: var(--shop1); color: #fff; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .schedule-btn.shop2 { background: var(--shop2); }
+  .schedule-table-wrap { margin-top: 12px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+  .schedule-row { display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 3fr; font-size: 0.78rem; border-bottom: 1px solid var(--border); }
+  .schedule-row:last-child { border-bottom: none; }
+  .schedule-row.header { background: #f5f5f5; font-weight: 700; color: var(--muted); font-size: 0.7rem; }
+  .schedule-row.weekend { background: #fff8f0; }
+  .schedule-cell { padding: 8px 10px; line-height: 1.4; }
+  .schedule-time { font-family: "DM Mono", monospace; font-weight: 700; color: var(--shop1); }
+  .schedule-time.shop2 { color: var(--shop2); }
+  .schedule-copy-btn { margin-top: 10px; width: 100%; padding: 8px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.78rem; font-weight: 700; cursor: pointer; color: var(--muted); }
   .gen-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--accent-grad); color: white; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 1rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .gen-btn.shop2 { background: linear-gradient(135deg, #8a5fc9, #c95f8a); }
   .gen-btn.loading { opacity: 0.7; pointer-events: none; }
@@ -242,6 +260,20 @@
   <!-- 生成ボタン -->
   <div class="gen-wrap">
     <button class="gen-btn" id="genBtn" onclick="generate()">✨ 1週間分の投稿文を生成する</button>
+  </div>
+
+  <!-- 投稿スケジュール -->
+  <div class="schedule-wrap">
+    <label class="schedule-label">📅 投稿スケジュール生成</label>
+    <div class="schedule-hint">スタート日を入力すると投稿時間スケジュールを自動生成します</div>
+    <div class="schedule-input-row">
+      <input type="date" id="scheduleStart" class="schedule-date-input">
+      <button class="schedule-btn" onclick="generateSchedule()">生成</button>
+    </div>
+    <div id="scheduleResult" style="display:none">
+      <div class="schedule-table-wrap" id="scheduleTable"></div>
+      <button class="schedule-copy-btn" onclick="copySchedule()">📋 スケジュールをコピー</button>
+    </div>
   </div>
 
   <!-- 投稿一覧 -->
@@ -908,6 +940,135 @@ async function rewritePost() {
   btn.textContent = "🪄 このキャラで書き直す";
 }
 
+// ============================================================
+// 投稿スケジュール生成
+// ============================================================
+var HOLIDAYS_2025_2026 = [
+  "2025-01-01","2025-01-13","2025-02-11","2025-02-23","2025-02-24",
+  "2025-03-20","2025-04-29","2025-05-03","2025-05-04","2025-05-05","2025-05-06",
+  "2025-07-21","2025-08-11","2025-09-15","2025-09-23","2025-10-13",
+  "2025-11-03","2025-11-23","2025-11-24","2025-12-23",
+  "2026-01-01","2026-01-12","2026-02-11","2026-02-23","2026-02-24",
+  "2026-03-20","2026-04-29","2026-05-03","2026-05-04","2026-05-05","2026-05-06",
+  "2026-07-20","2026-08-11","2026-09-21","2026-09-22","2026-09-23","2026-10-12",
+  "2026-11-03","2026-11-23"
+];
+
+function isHoliday(dateStr) {
+  return HOLIDAYS_2025_2026.indexOf(dateStr) >= 0;
+}
+
+function isWeekendOrHoliday(date) {
+  var day = date.getDay();
+  var y = date.getFullYear();
+  var m = String(date.getMonth()+1).padStart(2,"0");
+  var d = String(date.getDate()).padStart(2,"0");
+  var str = y + "-" + m + "-" + d;
+  return day === 0 || day === 6 || isHoliday(str);
+}
+
+function randomTime(isWeekend, prevMinutes) {
+  // 平日: 20:00-23:00 (1200-1380分)
+  // 土日祝: 12:00-14:00 (720-840分)
+  var min, max;
+  if (isWeekend) {
+    min = 720; max = 840;
+  } else {
+    min = 1200; max = 1380;
+  }
+  var range = max - min;
+  // 前回との差が±15〜50分になるようにする（単調増加・単調減少を防ぐ）
+  var candidate;
+  var attempts = 0;
+  do {
+    candidate = min + Math.floor(Math.random() * range);
+    attempts++;
+    // 前回値がある場合、差が15分以上あれば採用
+    if (prevMinutes === null) break;
+    var diff = candidate - prevMinutes;
+    // 15分以上差があればOK（増減どちらでも）
+    if (Math.abs(diff) >= 15) break;
+  } while (attempts < 20);
+  var h = Math.floor(candidate / 60);
+  var m2 = candidate % 60;
+  return {
+    str: String(h).padStart(2,"0") + ":" + String(m2).padStart(2,"0"),
+    minutes: candidate
+  };
+}
+
+function generateSchedule() {
+  var input = document.getElementById("scheduleStart").value;
+  if (!input) { alert("スタート日を入力してください"); return; }
+
+  var formula = getFormula();
+  var steps = formula.steps;
+  var DAYS_JP2 = ["日","月","火","水","木","金","土"];
+
+  var startDate = new Date(input + "T00:00:00");
+  var rows = [];
+  var prevMinutes = null;
+
+  for (var i = 0; i < steps.length; i++) {
+    var d = new Date(startDate);
+    d.setDate(startDate.getDate() + i);
+    var isWE = isWeekendOrHoliday(d);
+    var t = randomTime(isWE, prevMinutes);
+    prevMinutes = t.minutes;
+
+    var mm = String(d.getMonth()+1).padStart(2,"0");
+    var dd2 = String(d.getDate()).padStart(2,"0");
+    var dayStr = d.getFullYear() + "/" + mm + "/" + dd2;
+    var youbi = DAYS_JP2[d.getDay()];
+
+    rows.push({
+      date: dayStr,
+      youbi: youbi,
+      isWE: isWE,
+      time: t.str,
+      label: steps[i].label
+    });
+  }
+
+  // テーブル描画
+  var isShop2 = (SHOPS[currentShop].color === "shop2");
+  var html = "<div class=\"schedule-row header\">" +
+    "<div class=\"schedule-cell\">日付</div>" +
+    "<div class=\"schedule-cell\">曜日</div>" +
+    "<div class=\"schedule-cell\">時間</div>" +
+    "<div class=\"schedule-cell\">ステップ</div>" +
+    "</div>";
+
+  rows.forEach(function(r) {
+    html += "<div class=\"schedule-row" + (r.isWE ? " weekend" : "") + "\">" +
+      "<div class=\"schedule-cell\">" + r.date + "</div>" +
+      "<div class=\"schedule-cell\">" + r.youbi + (r.isWE ? "🌸" : "") + "</div>" +
+      "<div class=\"schedule-cell schedule-time" + (isShop2 ? " shop2" : "") + "\">" + r.time + "</div>" +
+      "<div class=\"schedule-cell\">" + r.label + "</div>" +
+      "</div>";
+  });
+
+  document.getElementById("scheduleTable").innerHTML = html;
+  document.getElementById("scheduleResult").style.display = "block";
+
+  // コピー用データを保存
+  document.getElementById("scheduleResult").dataset.rows = JSON.stringify(rows);
+}
+
+function copySchedule() {
+  var result = document.getElementById("scheduleResult");
+  var rows = JSON.parse(result.dataset.rows || "[]");
+  if (!rows.length) return;
+  var text = rows.map(function(r) {
+    return r.date + "（" + r.youbi + "）" + r.time + "　" + r.label;
+  }).join("\n");
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.querySelector(".schedule-copy-btn");
+    btn.textContent = "コピー済み ✓";
+    setTimeout(function() { btn.textContent = "📋 スケジュールをコピー"; }, 2000);
+  });
+}
+
 function copyRewrite() {
   var btn = document.getElementById("rewriteCopyBtn");
   var text = btn.dataset.text || document.getElementById("rewriteResult").textContent;
@@ -921,11 +1082,13 @@ function copyRewrite() {
 
 function updateRewriteBtnStyle() {
   var btn = document.getElementById("rewriteBtn");
-  if (!btn) return;
+  var sbtn = document.querySelector(".schedule-btn");
   if (activeTab === 2) {
-    btn.classList.add("shop2-style");
+    if (btn) btn.classList.add("shop2-style");
+    if (sbtn) sbtn.classList.add("shop2");
   } else {
-    btn.classList.remove("shop2-style");
+    if (btn) btn.classList.remove("shop2-style");
+    if (sbtn) sbtn.classList.remove("shop2");
   }
 }
 
