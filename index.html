@@ -1009,6 +1009,7 @@ async function generate() {
   // ★ スケジュールのスタート日を取得（セール判定用）
   var scheduleStartVal = document.getElementById("scheduleStart").value;
   var scheduleStartDate = scheduleStartVal ? new Date(scheduleStartVal + "T00:00:00") : null;
+  var prevPostMinutes = null;
 
   var btn = document.getElementById("genBtn");
   var wrap = document.getElementById("daysWrap");
@@ -1028,14 +1029,19 @@ async function generate() {
     var step = formula.steps[i];
     var day = DAYS_JP[i] || (i + 1) + "日目";
 
-    // ★ セール判定
+    // ★ セール判定 + 投稿時間生成
     var saleType = null;
     var postDateStr = "";
+    var postTime = "";
     if (scheduleStartDate) {
       var postDate = new Date(scheduleStartDate);
       postDate.setDate(scheduleStartDate.getDate() + i);
       postDateStr = dateToStr(postDate);
       saleType = getSaleInfo(postDateStr);
+      var isWE = isWeekendOrHoliday(postDate);
+      var t = randomTime(isWE, i > 0 ? prevPostMinutes : null);
+      prevPostMinutes = t.minutes;
+      postTime = t.str;
     }
 
     var card = document.createElement("div");
@@ -1053,11 +1059,17 @@ async function generate() {
       saleBadge = "<span style=\"background:#5a9ae8;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:6px;margin-left:6px;\">⭐ ポイントUP</span>";
     }
 
-    var dateLabel = postDateStr ? "<span style=\"font-size:0.7rem;color:var(--muted);margin-left:4px;\">" + postDateStr + "</span>" : "";
+    // 日付・時間ラベル
+    var dateLabel = postDateStr
+      ? "<span style=\"font-size:0.7rem;color:var(--muted);margin-left:6px;\">" + postDateStr + "</span>"
+      : "";
+    var timeLabel = postTime
+      ? "<span style=\"font-size:0.75rem;font-family:'DM Mono',monospace;font-weight:700;color:var(--shop1);margin-left:8px;\">🕐 " + postTime + "</span>"
+      : "";
 
     card.innerHTML =
       "<div class=\"day-header\">" +
-        "<span class=\"day-label\">DAY " + (i+1) + " · " + day + dateLabel + saleBadge + "</span>" +
+        "<span class=\"day-label\">DAY " + (i+1) + " · " + day + dateLabel + timeLabel + saleBadge + "</span>" +
         "<span class=\"day-step\">" + step.label + "</span>" +
       "</div>" +
       "<div class=\"day-body\" id=\"" + bodyId + "\"><span style=\"color:#bbb\">⏳ 待機中...</span></div>" +
